@@ -31,8 +31,8 @@ const BorderedButton = styled(Link)`
 
 const SearchButton = () =>
   <div>
-    <BorderedButton to='/auth/login'>병원검색</BorderedButton>
-    <BorderedButton to='/auth/login'>상점검색</BorderedButton>
+    <BorderedButton to='/search/hospital'>병원검색</BorderedButton>
+    <BorderedButton to='/search/store'>상점검색</BorderedButton>
   </div>
 
 export default SearchButton

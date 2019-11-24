@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route } from "react-router-dom";
-import { Patient, Auth, Home } from "pages";
+import { Auth, Home } from "pages";
 import HeaderContainer from "containers/Base/HeaderContainer";
 
 import storage from "lib/storage";
@@ -33,7 +33,6 @@ class App extends Component {
         <HeaderContainer />
         <Route exact path="/" component={Home} />
         <Route path="/auth" component={Auth} />
-        {this.props.logged ? <Patient /> : <div />}
       </div>
     );
   }
