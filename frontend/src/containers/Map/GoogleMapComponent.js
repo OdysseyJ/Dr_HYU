@@ -37,34 +37,38 @@ const GoogleMapContainer = withScriptjs(
       handleMarkerClick,
       activeMarkerInfo,
       showingInfoWindow,
-      handleReservationButton
+      handleReservationButton,
+      type
     } = props;
     let { isListSet } = props;
-    console.log("googlemapContainer", props.list);
+    const { ALL, all, search, Pharmacy, GlassStore } = props.options;
+    console.log("googlemapContainer", props.list, props.options);
     if (isListSet) {
-      const infoList = props.list.map(p => {
-        const {
-          lat,
-          lng,
-          name,
-          address,
-          department,
-          numOfDoctors,
-          openDay,
-          openTime
-        } = p;
-        return {
-          lat,
-          lng,
-          name,
-          address,
-          department,
-          numOfDoctors,
-          openDay,
-          openTime
-        };
+      const infoList = props.list.filter(p => {
+        if (type === "hospital") {
+          if (!ALL && !all && search === "") return p;
+          if (search === "") {
+            if (ALL) {
+              if (p.department === "상급종합") return p;
+            }
+            if (all) {
+              if (p.department === "종합병원") return p;
+            }
+          } else if (search.value === p.name) return p;
+        }
+        if (type === "store") {
+          if (!Pharmacy && !GlassStore && search === "") return p;
+          if (search === "") {
+            if (Pharmacy) {
+              if (p.department === "약국") return p;
+            }
+            if (GlassStore) {
+              if (p.department === "안경점") return p;
+            }
+          } else if (search.value === p.name) return p;
+        }
       });
-
+      console.log(infoList);
       return (
         <GoogleMap
           defaultZoom={13}
@@ -97,32 +101,83 @@ const GoogleMapContainer = withScriptjs(
                           padding: `15px`
                         }}
                       >
-                        <div style={{ fontSize: `15px`, fontColor: `#08233B` }}>
-                          {info.name}
-                        </div>
-                        <div style={{ fontSize: `12px`, fontColor: `#08233B` }}>
-                          분류 : {info.department}
-                        </div>
-                        <div style={{ fontSize: `12px`, fontColor: `#08233B` }}>
-                          주소 : {info.address}
-                        </div>
-                        <div style={{ fontSize: `12px`, fontColor: `#08233B` }}>
-                          전문의 수 : {info.numOfDoctors}명
-                        </div>
-                        <div style={{ fontSize: `12px`, fontColor: `#08233B` }}>
-                          진료 요일 : {info.openDay}
-                        </div>
-                        <div style={{ fontSize: `12px`, fontColor: `#08233B` }}>
-                          진료 시간 : {info.openTime}
-                        </div>
-                        <div style={{ paddingTop: 5 }} />
-                        <div style={{ textAlign: "center" }}>
-                          <Button
-                            text="예약하기"
-                            handleButton={() =>
-                              handleReservationButton(info.name)}
-                          />
-                        </div>
+                        {props.type === "patient" &&
+                          <div>
+                            <div
+                              style={{ fontSize: `15px`, fontColor: `#08233B` }}
+                            >
+                              {info.name}
+                            </div>
+                            <div
+                              style={{ fontSize: `12px`, fontColor: `#08233B` }}
+                            >
+                              분류 : {info.department}
+                            </div>
+                            <div
+                              style={{ fontSize: `12px`, fontColor: `#08233B` }}
+                            >
+                              주소 : {info.address}
+                            </div>
+                            <div
+                              style={{ fontSize: `12px`, fontColor: `#08233B` }}
+                            >
+                              전문의 수 : {info.numOfDoctors}명
+                            </div>
+                            <div
+                              style={{ fontSize: `12px`, fontColor: `#08233B` }}
+                            >
+                              진료 요일 : {info.openDay}
+                            </div>
+                            <div
+                              style={{ fontSize: `12px`, fontColor: `#08233B` }}
+                            >
+                              진료 시간 : {info.openTime}
+                            </div>
+                            <div style={{ paddingTop: 5 }} />
+                            <div style={{ textAlign: "center" }}>
+                              <Button
+                                text="예약하기"
+                                handleButton={() =>
+                                  handleReservationButton(info.name)}
+                              />
+                            </div>
+                          </div>}
+                        {props.type === "store" &&
+                          <div>
+                            <div
+                              style={{ fontSize: `15px`, fontColor: `#08233B` }}
+                            >
+                              {info.name}
+                            </div>
+                            <div
+                              style={{ fontSize: `12px`, fontColor: `#08233B` }}
+                            >
+                              분류 : {info.department}
+                            </div>
+                            <div
+                              style={{ fontSize: `12px`, fontColor: `#08233B` }}
+                            >
+                              주소 : {info.address}
+                            </div>
+                            <div
+                              style={{ fontSize: `12px`, fontColor: `#08233B` }}
+                            >
+                              영업 요일 : {info.openDay}
+                            </div>
+                            <div
+                              style={{ fontSize: `12px`, fontColor: `#08233B` }}
+                            >
+                              영업 시간 : {info.openTime}
+                            </div>
+                            <div style={{ paddingTop: 5 }} />
+                            <div style={{ textAlign: "center" }}>
+                              <Button
+                                text="예약하기"
+                                handleButton={() =>
+                                  handleReservationButton(info.name)}
+                              />
+                            </div>
+                          </div>}
                       </div>
                     </InfoBox>}
                 </Marker>
@@ -155,30 +210,39 @@ class GoogleMapComponent extends React.PureComponent {
     activeMarkerInfo: {},
     showingInfoWindow: false,
     showPopup: false,
-    selectedTime: {}
+    selectedTime: {},
+    options: {}
   };
 
   getList = async () => {
-    const { type } = this.props;
-    console.log(this.props);
-    console.log("Type", type);
-    console.log(this.state.type);
-    await this.setState({ type: type });
+    const { type, options } = this.props;
+    await this.setState({ type: type, options: options });
     const { lat, lng } = this.props.loggedInfo.toJS();
-    console.log(lat, lng, "getlist", this.state.type);
+    console.log(lat, lng);
     if (this.state.type === "hospital") {
-      console.log("test");
       const hospitalList = await mapAPI.getNearHospitals({
         lat: lat,
         lng: lng
       });
+      console.log(hospitalList);
       await this.setState({ isListSet: true, list: hospitalList.data });
-      console.log(this.state.isListSet, this.state.list);
     }
     if (this.state.type === "store") {
-      // const storeList =
+      const hospitalList = await mapAPI.getNearDrugstores({
+        lat: lat,
+        lng: lng
+      });
+      console.log(hospitalList);
+      await this.setState({ isListSet: true, list: hospitalList.data });
     }
   };
+
+  componentWillReceiveProps(nextProps) {
+    // it can help prevent an unneeded render
+    if (nextProps.options !== this.state.options) {
+      this.setState({ options: nextProps.options });
+    }
+  }
 
   componentDidMount() {
     console.log("componentdidmount");
@@ -239,6 +303,8 @@ class GoogleMapComponent extends React.PureComponent {
           activeMarkerInfo={this.state.activeMarkerInfo}
           handleReservationButton={this.handleReservationButton}
           isListSet={this.state.isListSet}
+          options={this.state.options}
+          type={this.state.type}
         />
         <Dialog
           open={this.state.showPopup}

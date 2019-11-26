@@ -96,6 +96,12 @@ db.Hospital.getAllHospitals = function () {
 }
 // ************* static method = [Hospital] 종료
 
+// ************* class / instance methods = [Store]
+db.Store.getAllStores = function () {
+  return db.Store.findAll()
+}
+// ************* static method = [Store] 종료
+
 // foreignkey 설정.
 db.Prescription.belongsTo(db.User, {
   foreignKey: 'uemail',

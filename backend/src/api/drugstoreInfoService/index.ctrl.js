@@ -1,9 +1,14 @@
 const ctrl = {}
 const request = require('request-promise-native')
 const db = require(__dirname + '/../../models')
+const { computeDistance } = require(__dirname + '/../../lib/computeDistance')
+
+// 데이터 검증
+const Joi = require('joi')
 
 // 한양대 근처 5km내의 모든 병원 정보 DBMS에 저장.
-ctrl.getDefaultDrugstore = async ctx => {
+ctrl.getDefaultDrugstores = async ctx => {
+  console.log('start')
   ctx.body = 'test'
   const key = process.env.APIKEY
   const xpos = process.env.HYU_lng
@@ -27,7 +32,7 @@ ctrl.getDefaultDrugstore = async ctx => {
   console.log(totalCount)
   var pageNum = 1
   const numOfRows = 10
-  for (var count = 0; count < totalCount; count += numOfRows) {
+  for (var count = 0; count < 1; count++) {
     const options = {
       uri:
         'http://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList' +
@@ -48,14 +53,15 @@ ctrl.getDefaultDrugstore = async ctx => {
 
     pageNum++
     const response = await request(options)
-    const drugstore_arr = JSON.parse(response).response.body.items.item
-    drugstore_arr.map(async p => {
+    const store_arr = JSON.parse(response).response.body.items.item
+    store_arr.map(async p => {
       console.log(p.yadmNm)
-      await db.Drugstore.create({
+      await db.Store.create({
         name: p.yadmNm,
+        numOfDoctors: p.sdrCnt,
         department: p.clCdNm,
-        lat: p.XPos,
-        lng: p.YPos,
+        lat: p.YPos,
+        lng: p.XPos,
         address: p.addr,
         openTime: '09:00~18:00',
         openDay: '월,화,수,목,금'
@@ -65,29 +71,39 @@ ctrl.getDefaultDrugstore = async ctx => {
 }
 
 ctrl.getDrugstores = async ctx => {
-  const key = process.env.APIKEY
-  const xpos = ctx.xpos
-  const ypos = ctx.ypos
-  const radius = 5000
-  const options = {
-    uri:
-      'http://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList' +
-      '?ServiceKey=' +
-      key +
-      '&xPos=' +
-      xpos +
-      '&yPos=' +
-      ypos +
-      '&radius=' +
-      radius +
-      '&_type=json'
+  console.log('gethospitals')
+  // 스키마 만들기
+  const schema = Joi.object().keys({
+    lat: Joi.required(),
+    lng: Joi.required()
+  })
+
+  // 스키마 검증
+  const result = Joi.validate(ctx.request.body, schema)
+
+  // 스키마 검증 실패
+  if (result.error) {
+    console.log('실패')
+    ctx.status = 400
+    return
   }
-  const response = await request(options)
-  const totalCount = JSON.parse(response).response.body.totalCount
-  console.log(totalCount)
-  var pageNum = 1
-  const numOfRows = 10
-  for (var count = 0; count < totalCount; count += numOfRows) {
+
+  const { lat, lng } = ctx.request.body
+  console.log(lat, lng)
+  const key = process.env.APIKEY
+  const HYU_lng = process.env.HYU_lng
+  const HYU_lat = process.env.HYU_lat
+  const MAX_DISTANCE = process.env.MAX_DISTANCE
+
+  const distance = computeDistance(
+    { latitude: lat, longitude: lng },
+    { latitude: HYU_lat, longitude: HYU_lng }
+  )
+
+  if (distance > MAX_DISTANCE) {
+    // 해당 위치를 기반으로 API 요청하기. await사용.
+    var pageNum = 1
+    const numOfRows = 10
     const options = {
       uri:
         'http://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList' +
@@ -98,29 +114,57 @@ ctrl.getDrugstores = async ctx => {
         '&numOfRows' +
         numOfRows +
         '&xPos=' +
-        xpos +
+        lng +
         '&yPos=' +
-        ypos +
+        lat +
         '&radius=' +
-        radius +
+        MAX_DISTANCE * 1000 +
         '&_type=json'
     }
-
-    pageNum++
     const response = await request(options)
-    const drugstore_arr = JSON.parse(response).response.body.items.item
-    drugstore_arr.map(async p => {
-      console.log(p.yadmNm)
-      await db.Drugstore.create({
+    const totalCount = JSON.parse(response).response.body.totalCount
+
+    if (totalCount === 0) {
+      ctx.status = 200
+      ctx.body = {}
+      return
+    }
+
+    const { items: { item } } = JSON.parse(response).response.body
+    item.map(async p => {
+      await db.Store.create({
         name: p.yadmNm,
+        numOfDoctors: p.sdrCnt,
         department: p.clCdNm,
-        lat: p.XPos,
-        lng: p.YPos,
+        lat: p.YPos,
+        lng: p.XPos,
         address: p.addr,
         openTime: '09:00~18:00',
         openDay: '월,화,수,목,금'
       })
     })
+  }
+
+  const list = await db.Store.getAllStores()
+  const validlist = list
+    .filter(p => {
+      const distance = computeDistance(
+        { latitude: lat, longitude: lng },
+        { latitude: p.lat, longitude: p.lng }
+      )
+      if (distance < MAX_DISTANCE) return p
+    })
+    .map(p => {
+      return p.dataValues
+    })
+
+  console.log(validlist)
+  if (validlist === null) {
+    ctx.status = 200
+    ctx.body = {}
+  } else {
+    ctx.status = 200
+    ctx.body = validlist
   }
 }
 

@@ -103,7 +103,6 @@ ctrl.getHospitals = async ctx => {
     { latitude: lat, longitude: lng },
     { latitude: HYU_lat, longitude: HYU_lng }
   )
-  console.log(distance)
 
   if (distance > MAX_DISTANCE) {
     // 해당 위치를 기반으로 API 요청하기. await사용.
@@ -127,6 +126,14 @@ ctrl.getHospitals = async ctx => {
         '&_type=json'
     }
     const response = await request(options)
+    const totalCount = JSON.parse(response).response.body.totalCount
+
+    if (totalCount === 0) {
+      ctx.status = 200
+      ctx.body = {}
+      return
+    }
+
     const { items: { item } } = JSON.parse(response).response.body
     item.map(async p => {
       await db.Hospital.create({
@@ -154,10 +161,11 @@ ctrl.getHospitals = async ctx => {
     .map(p => {
       return p.dataValues
     })
-  console.log(validlist)
 
+  console.log(validlist)
   if (validlist === null) {
-    ctx.status = 404
+    ctx.status = 200
+    ctx.body = {}
   } else {
     ctx.status = 200
     ctx.body = validlist

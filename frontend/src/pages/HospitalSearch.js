@@ -1,16 +1,30 @@
-import React, { Component } from 'react'
-import { GoogleMapComponent, Title, SelectOptions } from '../containers/Map'
+import React, { Component } from "react";
+import { GoogleMapComponent, Title, SelectOptions } from "../containers/Map";
 
-class Map extends Component {
-  render () {
+class HospitalSearch extends Component {
+  state = {
+    options: {
+      Pharmacy: false,
+      GlassStore: false,
+      ALL: false,
+      all: false,
+      search: ""
+    }
+  };
+
+  handleSearchButton = options => {
+    this.setState({ options: options });
+  };
+
+  render() {
     return (
       <div>
-        <Title title='병원 검색하기' />
-        <GoogleMapComponent type='hospital' />
-        <SelectOptions type='hospital' />
+        <Title title="병원 검색하기" />
+        <GoogleMapComponent type="hospital" options={this.state.options} />
+        <SelectOptions type="hospital" onCreate={this.handleSearchButton} />
       </div>
-    )
+    );
   }
 }
 
-export default Map
+export default HospitalSearch;
