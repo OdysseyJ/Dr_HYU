@@ -5,6 +5,8 @@ const crypto = require('crypto')
 
 const { generateToken } = require(__dirname + '/../lib/token')
 
+const { computeDistance } = require(__dirname + '/../lib/computeDistance')
+
 const db = {}
 
 // 비밀번호 암호화 함수
@@ -88,14 +90,29 @@ db.User.prototype.generateToken = function () {
 
 // ************* static method = [User] 종료
 
-// foreignkey 설정.
-db.Prescription.belongsTo(db.User, { foreignKey: 'uid', targetKey: 'id' })
-db.Prescription.belongsTo(db.Hospital, { foreignKey: 'hid', targetKey: 'id' })
-db.Prescription.belongsTo(db.Store, { foreignKey: 'sid', targetKey: 'id' })
+// ************* class / instance methods = [Hospital]
+db.Hospital.getAllHospitals = function () {
+  return db.Hospital.findAll()
+}
+// ************* static method = [Hospital] 종료
 
-db.Reservation.belongsTo(db.User, { foreignKey: 'uid', targetKey: 'id' })
-db.Reservation.belongsTo(db.Hospital, { foreignKey: 'hid', targetKey: 'id' })
-db.Reservation.belongsTo(db.Store, { foreignKey: 'sid', targetKey: 'id' })
+// foreignkey 설정.
+db.Prescription.belongsTo(db.User, {
+  foreignKey: 'uemail',
+  targetKey: 'email'
+})
+db.Prescription.belongsTo(db.Hospital, {
+  foreignKey: 'hname',
+  targetKey: 'name'
+})
+db.Prescription.belongsTo(db.Store, { foreignKey: 'sname', targetKey: 'name' })
+
+db.Reservation.belongsTo(db.User, { foreignKey: 'uemail', targetKey: 'email' })
+db.Reservation.belongsTo(db.Hospital, {
+  foreignKey: 'hname',
+  targetKey: 'name'
+})
+db.Reservation.belongsTo(db.Store, { foreignKey: 'sname', targetKey: 'name' })
 
 db.sequelize = sequelize
 db.Sequelize = Sequelize

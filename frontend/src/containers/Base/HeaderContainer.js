@@ -15,7 +15,7 @@ class HeaderContainer extends Component {
     }
 
     storage.remove("loggedInfo");
-    // window.location.href = "/"; // 홈페이지로 새로고침
+    window.location.href = "/"; // 홈페이지로 새로고침
   };
 
   render() {

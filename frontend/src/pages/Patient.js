@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { InfoList, SearchButton } from 'components/patient'
-import PropTypes from 'prop-types'
 
 class Patient extends Component {
   render () {

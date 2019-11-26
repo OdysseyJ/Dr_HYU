@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 
 class Store extends Component {
   render () {
@@ -13,7 +12,5 @@ class Store extends Component {
     )
   }
 }
-
-Store.propTypes = {}
 
 export default Store

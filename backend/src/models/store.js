@@ -1,12 +1,8 @@
 module.exports = (sequelize, Sequelize) => {
   return sequelize.define('store', {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
     name: {
       type: Sequelize.STRING,
+      primaryKey: true,
       allowNull: false
     },
     department: {

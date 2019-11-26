@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import { Route } from 'react-router-dom'
-import { Patient, Hospital, Store, MapContainer } from 'pages'
+import { Patient, Hospital, Store } from 'pages'
 
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -16,7 +15,6 @@ class Home extends Component {
           : <div />}
         {this.props.logged && usertype === 'hospital' ? <Hospital /> : <div />}
         {this.props.logged && usertype === 'store' ? <Store /> : <div />}
-        <Route exact path='/search/hospital' component={MapContainer} />
       </div>
     )
   }
