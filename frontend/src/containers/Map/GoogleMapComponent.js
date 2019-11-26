@@ -29,8 +29,16 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 const { InfoBox } = require("react-google-maps/lib/components/addons/InfoBox");
 
+var moment = require("moment");
+moment().format();
+
+// for T
+
+// 구글맵 출력하는 컴포넌트.
 const GoogleMapContainer = withScriptjs(
   withGoogleMap(function(props) {
+    const currentHour = Number(String(moment()._d).split(" ")[4].split(":")[0]);
+
     const defaultlat = parseFloat(process.env.REACT_APP_HYU_LAT);
     const defaultlng = parseFloat(process.env.REACT_APP_HYU_LNG);
     const {
@@ -44,6 +52,7 @@ const GoogleMapContainer = withScriptjs(
     const { ALL, all, search, Pharmacy, GlassStore } = props.options;
     console.log("googlemapContainer", props.list, props.options);
     if (isListSet) {
+      // option에 따라 보여줄 마커 결정하기.
       const infoList = props.list.filter(p => {
         if (type === "hospital") {
           if (!ALL && !all && search === "") return p;
@@ -68,6 +77,23 @@ const GoogleMapContainer = withScriptjs(
           } else if (search.value === p.name) return p;
         }
       });
+
+      const availableList = infoList.filter(p => {
+        const startHour = Number(p.openTime.split("~")[0].split(":")[0]);
+        const closeHour = Number(p.openTime.split("~")[1].split(":")[0]);
+        if (currentHour >= startHour && currentHour < closeHour) {
+          return p;
+        }
+      });
+
+      const unavailableList = infoList.filter(p => {
+        const startHour = Number(p.openTime.split("~")[0].split(":")[0]);
+        const closeHour = Number(p.openTime.split("~")[1].split(":")[0]);
+        if (currentHour < startHour && currentHour >= closeHour) {
+          return p;
+        }
+      });
+
       console.log(infoList);
       return (
         <GoogleMap
@@ -84,6 +110,9 @@ const GoogleMapContainer = withScriptjs(
                     lng: parseFloat(info.lng)
                   }}
                   onClick={() => handleMarkerClick(info.name)}
+                  icon={{
+                    url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                  }}
                 >
                   {showingInfoWindow &&
                     activeMarkerInfo !== null &&
