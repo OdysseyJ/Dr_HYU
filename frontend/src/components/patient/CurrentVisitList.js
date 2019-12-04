@@ -63,7 +63,7 @@ class CurrentVisitList extends Component {
     return (
       <div>
         <Typography style={{ paddingLeft: 30, paddingTop: 50 }} variant="h5">
-          내예약목록
+          최근방문목록
         </Typography>
         <div
           style={{
@@ -85,9 +85,9 @@ class CurrentVisitList extends Component {
                 const month = split[1];
                 const day = split[2];
                 const time = split[3];
-                const total = `${year}년 ${month}월 ${day}일 ${time}시`;
+                const total = `예약시간 : ${year}년 ${month}월 ${day}일 ${time}시`;
                 return (
-                  <ListItem key={p}>
+                  <ListItem key={p.id}>
                     <ListItemText primary={name} secondary={total} />
                     <ListItemSecondaryAction>
                       <IconButton

@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import {
   SearchButton,
   ReservationList,
-  CurrentVisitList
+  CurrentVisitList,
+  FavoriteList
 } from 'components/patient'
 import EyeIcon from '@material-ui/icons/Visibility'
 import Grid from '@material-ui/core/Grid'
@@ -21,7 +22,7 @@ class Patient extends Component {
             <ReservationList />
           </Grid>
           <Grid item xs={6}>
-            <ReservationList />
+            <FavoriteList />
           </Grid>
         </Grid>
       </div>
