@@ -49,6 +49,7 @@ const GoogleMapContainer = withScriptjs(
       activeMarkerInfo,
       showingInfoWindow,
       handleReservationButton,
+      handleFavoriteButton,
       type
     } = props;
     let { isListSet } = props;
@@ -197,12 +198,6 @@ const GoogleMapContainer = withScriptjs(
                               진료 시간 : {info.openTime}
                             </div>
                             <div style={{ paddingTop: 5 }} />
-                            <div style={{ textAlign: "center" }}>
-                              <Button
-                                text="예약하기"
-                                handleButton={() => handleReservationButton()}
-                              />
-                            </div>
                           </div>}
                         {props.type === "store" &&
                           <div>
@@ -247,13 +242,17 @@ const GoogleMapContainer = withScriptjs(
                               영업 시간 : {info.openTime}
                             </div>
                             <div style={{ paddingTop: 5 }} />
-                            <div style={{ textAlign: "center" }}>
-                              <Button
-                                text="예약하기"
-                                handleButton={() => handleReservationButton()}
-                              />
-                            </div>
                           </div>}
+                        <div style={{ textAlign: "center" }}>
+                          <Button
+                            text="예약하기"
+                            handleButton={() => handleReservationButton()}
+                          />
+                          <Button
+                            text="즐겨찾기에 추가"
+                            handleButton={() => handleFavoriteButton()}
+                          />
+                        </div>
                       </div>
                     </InfoBox>}
                 </Marker>
@@ -382,10 +381,12 @@ class GoogleMapComponent extends React.PureComponent {
     isMarkerShown: false,
     isListSet: false,
     isAllSelect: false,
+    isExistInFavorite: false,
     list: {},
     activeMarkerInfo: {},
     showingInfoWindow: false,
     showPopup: false,
+    showFavoritePopup: false,
     selectedYear: "",
     selectedMonth: "",
     selectedDay: "",
@@ -460,7 +461,7 @@ class GoogleMapComponent extends React.PureComponent {
   //   this.setState({ showingInfoWindow: !this.state.showingInfoWindow });
   // };
 
-  handleMarkerClick = name => {
+  handleMarkerClick = async name => {
     if (!this.state.showingInfoWindow) {
       this.setState({
         activeMarkerInfo: name,
@@ -489,6 +490,12 @@ class GoogleMapComponent extends React.PureComponent {
       selectedTime: "",
       isAllSelect: false,
       showPopup: !this.state.showPopup
+    });
+  };
+
+  handleFavoriteButton = () => {
+    this.setState({
+      showFavoritePopup: !this.state.showFavoritePopup
     });
   };
 
@@ -602,6 +609,7 @@ class GoogleMapComponent extends React.PureComponent {
           showingInfoWindow={this.state.showingInfoWindow}
           activeMarkerInfo={this.state.activeMarkerInfo}
           handleReservationButton={this.handleReservationButton}
+          handleFavoriteButton={this.handleFavoriteButton}
           isListSet={this.state.isListSet}
           options={this.state.options}
           type={this.state.type}
@@ -692,6 +700,23 @@ class GoogleMapComponent extends React.PureComponent {
             <InputLabel id="select_time">시</InputLabel>
             <Button text="취소하기" handleButton={this.handleReservationButton} />
             <Button text="완료하기" handleButton={this.handleCompleteButton} />
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={this.state.showFavoritePopup}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {this.state.activeMarkerInfo}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              즐겨찾기에 추가되었습니다.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button text="완료하기" handleButton={this.handleFavoriteButton} />
           </DialogActions>
         </Dialog>
       </div>

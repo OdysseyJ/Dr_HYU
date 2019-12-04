@@ -157,6 +157,40 @@ db.Reservation.getStoreAllReservation = ({ sname }) => {
 }
 // ************* static method = [Reservation] 종료
 
+// ************* class / instance methods = [Favorite]
+db.Favorite.makeFavorite = ({ uemail, hname, sname }) => {
+  return db.Favorite.create({
+    uemail: uemail,
+    hname: hname,
+    sname: sname
+  })
+}
+
+db.Favorite.deleteFavorite = ({ uemail, hname, sname }) => {
+  return db.Favorite.destroy({
+    where: { uemail: uemail, hname: hname, sname: sname }
+  })
+}
+
+db.Favorite.getPatientAllFavorite = ({ uemail }) => {
+  return db.Favorite.findAll({
+    where: {
+      uemail: uemail
+    }
+  })
+}
+
+db.Favorite.findFavorite = ({ uemail, hname, sname }) => {
+  return db.Favorite.findOne({
+    where: {
+      uemail: uemail,
+      hname: hname,
+      sname: sname
+    }
+  })
+}
+// ************* static method = [Favorite] 종료
+
 // foreignkey 설정.
 db.Prescription.belongsTo(db.User, {
   foreignKey: 'uemail',
@@ -164,8 +198,6 @@ db.Prescription.belongsTo(db.User, {
 })
 
 db.Reservation.belongsTo(db.User, { foreignKey: 'uemail', targetKey: 'email' })
-
-db.Favorite.belongsTo(db.User, { foreignKey: 'uemail', targetKey: 'email' })
 
 db.Log.belongsTo(db.User, { foreignKey: 'uemail', targetKey: 'email' })
 

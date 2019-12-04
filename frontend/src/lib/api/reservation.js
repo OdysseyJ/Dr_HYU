@@ -8,3 +8,6 @@ export const deleteReservation = ({ id }) =>
 
 export const getReservations = ({ usertype, name }) =>
   axios.get(`/api/reservation?usertype=${usertype}&name=${name}`)
+
+export const isExists = ({ uemail, hname, sname }) =>
+  axios.get(`/api/reservation?uemail=${uemail}&hname=${hname}&sname=${sname}`)

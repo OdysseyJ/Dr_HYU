@@ -3,6 +3,9 @@ const router = new Router()
 
 const ctrl = require('./index.ctrl')
 
-router.get('/', ctrl.getPage)
+router.post('/make', ctrl.makeFavorite)
+router.post('/delete', ctrl.deleteFavorite)
+router.get('/exists', ctrl.exists)
+router.get('/', ctrl.getFavorites)
 
 module.exports = router
