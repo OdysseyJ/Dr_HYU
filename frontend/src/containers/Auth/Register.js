@@ -59,8 +59,8 @@ class Register extends Component {
       return true;
     },
     name: value => {
-      if (!isAlphanumeric(value) || !isLength(value, { min: 4, max: 15 })) {
-        this.setError("이름은 4~15 글자의 알파벳 혹은 숫자로 이뤄져야 합니다.");
+      if (!isLength(value, { min: 3, max: 20 })) {
+        this.setError("이름은 3~20 글자 사이로 입력해주세요.");
         return false;
       }
       return true;
@@ -133,15 +133,6 @@ class Register extends Component {
       value,
       form: "register"
     });
-
-    // 검증작업 진행
-    const validation = this.validate[name](value);
-    if (name.indexOf("password") > -1 || !validation) return; // 비밀번호 검증이거나, 검증 실패하면 여기서 마침
-
-    // TODO: 이메일, 아이디 중복 확인
-    const check =
-      name === "email" ? this.checkEmailExists : this.checkUsernameExists; // name 에 따라 이메일체크할지 아이디 체크 할지 결정
-    check(value);
   };
 
   handleChange = e => {

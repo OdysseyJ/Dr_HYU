@@ -2,18 +2,13 @@ import React, { Component } from "react";
 import * as logAPI from "lib/api/log";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
-import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 
 //for redux.
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import * as userActions from "redux/modules/user";
-
-import { Button } from "components/Util";
-import { Dialog, DialogTitle, DialogActions } from "@material-ui/core";
 
 class CurrentVisitList extends Component {
   state = {
