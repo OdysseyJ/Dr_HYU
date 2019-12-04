@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import * as reservationAPI from "lib/api/reservation";
+import * as prescriptionAPI from "lib/api/prescription";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-import DeleteIcon from "@material-ui/icons/Delete";
+import EyeIcon from "@material-ui/icons/Visibility";
 
 //for redux.
 import { connect } from "react-redux";
@@ -16,54 +16,39 @@ import * as userActions from "redux/modules/user";
 import { Button } from "components/Util";
 import { Dialog, DialogTitle, DialogActions } from "@material-ui/core";
 
-class ReservationList extends Component {
+class PrescriptionList extends Component {
   state = {
-    reservations: [],
+    prescriptions: [],
     isPopupShow: false,
     selectedId: ""
   };
 
-  getReservations = async () => {
-    const { usertype, email } = this.props.loggedInfo.toJS();
-    const reservations = await reservationAPI.getReservations({
-      usertype: usertype,
-      name: email
+  getPrescriptions = async () => {
+    const { email } = this.props.loggedInfo.toJS();
+    const prescriptions = await prescriptionAPI.getPrescriptions({
+      uemail: email
     });
-    this.setState({ reservations: reservations.data });
+    this.setState({ prescriptions: prescriptions.data });
   };
 
-  handleDeleteButton = (data, e) => {
+  handleEyeButton = (data, e) => {
     const id = data.p.id;
     this.setState({ isPopupShow: true, selectedId: id });
   };
 
-  handleDeleteComplete = async () => {
-    await reservationAPI.deleteReservation({ id: this.state.selectedId });
-    const { usertype, email } = this.props.loggedInfo.toJS();
-    const reservations = await reservationAPI.getReservations({
-      usertype: usertype,
-      name: email
-    });
-    this.setState({
-      isPopupShow: false,
-      selectedId: "",
-      reservations: reservations.data
-    });
-  };
-
-  handleExitButton = () => {
+  handleCloseButton = () => {
     this.setState({ isPopupShow: false, selectedId: "" });
   };
 
   componentDidMount() {
-    this.getReservations();
+    this.getPrescriptions();
   }
 
   render() {
     return (
       <div>
         <Typography style={{ paddingLeft: 30, paddingTop: 50 }} variant="h5">
-          내예약목록
+          나의처방전
         </Typography>
         <div
           style={{
@@ -73,30 +58,24 @@ class ReservationList extends Component {
         >
           <div>
             <List>
-              {this.state.reservations &&
-                this.state.reservations.map(p => {
+              {this.state.prescriptions &&
+                this.state.prescriptions.map(p => {
                   let name;
-                  if (p.sname === null) {
+                  if (p.sname === "") {
                     name = p.hname;
-                  } else if (p.hname === null) {
+                  } else if (p.hname === "") {
                     name = p.sname;
                   }
-                  const split = p.time.split(" ");
-                  const year = split[0];
-                  const month = split[1];
-                  const day = split[2];
-                  const time = split[3];
-                  const total = `예약시간 : ${year}년 ${month}월 ${day}일 ${time}시`;
                   return (
                     <ListItem key={p.id}>
-                      <ListItemText primary={name} secondary={total} />
+                      <ListItemText primary={name} />
                       <ListItemSecondaryAction>
                         <IconButton
-                          onClick={this.handleDeleteButton.bind(this, { p })}
+                          onClick={this.handleEyeButton.bind(this, { p })}
                           edge="end"
-                          aria-label="delete"
+                          aria-label="show"
                         >
-                          <DeleteIcon />
+                          <EyeIcon />
                         </IconButton>
                       </ListItemSecondaryAction>
                     </ListItem>
@@ -109,11 +88,28 @@ class ReservationList extends Component {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">정말로 삭제하시겠습니까?</DialogTitle>
+            <DialogTitle id="alert-dialog-title">처방전</DialogTitle>
+            {this.state.prescriptions &&
+              this.state.prescriptions.map(p => {
+                if (p.id === this.state.selectedId) {
+                  return (
+                    <div
+                      style={{
+                        paddingLeft: 10,
+                        paddingTop: 10,
+                        paddingRight: 10,
+                        paddingBottom: 10
+                      }}
+                    >
+                      ${p.prescription}
+                    </div>
+                  );
+                }
+                return <div />;
+              })}
 
             <DialogActions>
-              <Button text="취소하기" handleButton={this.handleExitButton} />
-              <Button text="삭제하기" handleButton={this.handleDeleteComplete} />
+              <Button text="돌아가기" handleButton={this.handleCloseButton} />
             </DialogActions>
           </Dialog>
         </div>
@@ -129,4 +125,4 @@ export default connect(
   dispatch => ({
     UserActions: bindActionCreators(userActions, dispatch)
   })
-)(ReservationList);
+)(PrescriptionList);

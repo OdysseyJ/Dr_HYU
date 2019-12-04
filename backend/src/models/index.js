@@ -114,7 +114,57 @@ db.Log.makeLog = function ({ type, time, prescription, uemail, hname, sname }) {
     sname: sname
   })
 }
+
+db.Log.getAllPatientLogs = ({ uemail }) => {
+  return db.Log.findAll({
+    where: {
+      uemail: uemail
+    }
+  })
+}
+
+db.Log.getAllHospitalLogs = ({ hname }) => {
+  return db.Log.findAll({
+    where: {
+      hname: hname
+    }
+  })
+}
+
+db.Log.getAllStoreLogs = ({ sname }) => {
+  return db.Log.findAll({
+    where: {
+      sname: sname
+    }
+  })
+}
+
 // ************* static method = [Log] 종료
+
+// ************* class / instance methods = [Prescription]
+db.Prescription.makePrescription = function ({
+  prescription,
+  uemail,
+  hname,
+  sname
+}) {
+  return db.Prescription.create({
+    prescription: prescription,
+    uemail: uemail,
+    hname: hname,
+    sname: sname
+  })
+}
+
+db.Prescription.getAllPrescription = ({ uemail }) => {
+  return db.Prescription.findAll({
+    where: {
+      uemail: uemail
+    }
+  })
+}
+
+// ************* static method = [Prescription] 종료
 
 // ************* class / instance methods = [Reservation]
 db.Reservation.makeReservation = ({ time, uemail, hname, sname }) => {

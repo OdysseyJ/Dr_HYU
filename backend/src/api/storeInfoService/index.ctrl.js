@@ -51,10 +51,11 @@ ctrl.getDefaultDrugstores = async ctx => {
         name: p.yadmNm,
         numOfDoctors: p.sdrCnt,
         department: p.clCdNm,
+        prescription: '확인중',
         lat: p.YPos,
         lng: p.XPos,
         address: p.addr,
-        openTime: '09:00~18:00',
+        openTime: '00:00~24:00',
         openDay: '월,화,수,목,금'
       })
     })
@@ -104,6 +105,7 @@ ctrl.getDefaultGlassStores = async ctx => {
             await db.Store.create({
               name: title,
               department: '안경점',
+              prescription: '확인중',
               lat: y,
               lng: x,
               address: address,
@@ -180,10 +182,11 @@ ctrl.getStores = async ctx => {
         name: p.yadmNm,
         numOfDoctors: p.sdrCnt,
         department: p.clCdNm,
+        prescription: '확인중',
         lat: p.YPos,
         lng: p.XPos,
         address: p.addr,
-        openTime: '09:00~18:00',
+        openTime: '00:00~24:00',
         openDay: '월,화,수,목,금'
       })
     })

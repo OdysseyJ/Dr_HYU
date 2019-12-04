@@ -226,6 +226,14 @@ const GoogleMapContainer = withScriptjs(
                                 fontColor: `#08233B`
                               }}
                             >
+                              처방가능 : {info.prescription}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: `12px`,
+                                fontColor: `#08233B`
+                              }}
+                            >
                               주소 : {info.address}
                             </div>
                             <div
@@ -474,7 +482,6 @@ class GoogleMapComponent extends React.PureComponent {
     const { email } = this.props.loggedInfo.toJS();
     const type = this.state.type;
     let isExistInFavorite;
-    console.log(type);
     if (type === "hospital") {
       isExistInFavorite = await favoriteAPI.isExists({
         uemail: email,
@@ -489,7 +496,6 @@ class GoogleMapComponent extends React.PureComponent {
       });
     }
     this.setState({ isExistInFavorite: isExistInFavorite.data });
-    console.log(isExistInFavorite.data);
     if (!this.state.showingInfoWindow) {
       this.setState({
         activeMarkerInfo: name,
@@ -523,7 +529,6 @@ class GoogleMapComponent extends React.PureComponent {
 
   handleFavoriteButton = async () => {
     const { email } = this.props.loggedInfo.toJS();
-    console.log(this.state.activeMarkerInfo);
     if (
       this.state.type === "hospital" &&
       this.state.showFavoritePopup === false

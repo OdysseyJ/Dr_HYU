@@ -3,9 +3,9 @@ import {
   SearchButton,
   ReservationList,
   CurrentVisitList,
-  FavoriteList
+  FavoriteList,
+  PrescriptionList
 } from 'components/patient'
-import EyeIcon from '@material-ui/icons/Visibility'
 import Grid from '@material-ui/core/Grid'
 
 class Patient extends Component {
@@ -14,15 +14,19 @@ class Patient extends Component {
       <div>
         <h1>blank</h1>
         <SearchButton />
+        <div style={{ paddingTop: 30 }} />
         <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <CurrentVisitList />
-          </Grid>
           <Grid item xs={6}>
             <ReservationList />
           </Grid>
           <Grid item xs={6}>
             <FavoriteList />
+          </Grid>
+          <Grid item xs={6}>
+            <CurrentVisitList />
+          </Grid>
+          <Grid item xs={6}>
+            <PrescriptionList />
           </Grid>
         </Grid>
       </div>
