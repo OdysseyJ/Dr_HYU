@@ -35,13 +35,13 @@ ctrl.getFavorites = async ctx => {
     return p.dataValues
   })
 
+  console.log(reservationsArr)
   ctx.body = reservationsArr
   ctx.status = 200
 }
 
 ctrl.exists = async ctx => {
   const { uemail, hname, sname } = ctx.request.query
-
   const reservations = await db.Favorite.findFavorite({
     uemail: uemail,
     hname: hname,
@@ -50,7 +50,7 @@ ctrl.exists = async ctx => {
 
   if (reservations === null) {
     ctx.body = false
-    ctx.status = 404
+    ctx.status = 200
   } else {
     ctx.body = true
     ctx.status = 200

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import * as reservationAPI from "lib/api/reservation";
+import * as favoriteAPI from "lib/api/favorite";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
@@ -18,36 +18,49 @@ import { Dialog, DialogTitle, DialogActions } from "@material-ui/core";
 
 class FavoriteList extends Component {
   state = {
-    reservations: [],
+    favorites: [],
     isPopupShow: false,
-    selectedId: ""
+    uemail: "",
+    sname: "",
+    hname: ""
   };
 
-  getReservations = async () => {
-    const { usertype, email } = this.props.loggedInfo.toJS();
-    const reservations = await reservationAPI.getReservations({
-      usertype: usertype,
-      name: email
+  getFavorites = async () => {
+    const { email } = this.props.loggedInfo.toJS();
+    const favorites = await favoriteAPI.getFavorites({
+      uemail: email
     });
-    this.setState({ reservations: reservations.data });
+    this.setState({ favorites: favorites.data });
   };
 
   handleDeleteButton = (data, e) => {
-    const id = data.p.id;
-    this.setState({ isPopupShow: true, selectedId: id });
+    const { uemail, sname, hname } = data.p;
+    this.setState({
+      isPopupShow: true,
+      uemail: uemail,
+      sname: sname,
+      hname: hname
+    });
   };
 
   handleDeleteComplete = async () => {
-    await reservationAPI.deleteReservation({ id: this.state.selectedId });
-    const { usertype, email } = this.props.loggedInfo.toJS();
-    const reservations = await reservationAPI.getReservations({
-      usertype: usertype,
-      name: email
+    const { uemail, hname, sname } = this.state;
+    await favoriteAPI.deleteFavorite({
+      uemail: uemail,
+      hname: hname,
+      sname: sname
+    });
+    const favorites = await favoriteAPI.getFavorites({
+      uemail: uemail,
+      hname: hname,
+      sname: sname
     });
     this.setState({
       isPopupShow: false,
-      selectedId: "",
-      reservations: reservations
+      uemail: "",
+      hname: "",
+      sname: "",
+      favorites: favorites.data
     });
   };
 
@@ -56,7 +69,7 @@ class FavoriteList extends Component {
   };
 
   componentDidMount() {
-    this.getReservations();
+    this.getFavorites();
   }
 
   render() {
@@ -73,34 +86,29 @@ class FavoriteList extends Component {
         >
           <div>
             <List>
-              {this.state.reservations.map(p => {
-                let name;
-                if (p.sname === null) {
-                  name = p.hname;
-                } else if (p.hname === null) {
-                  name = p.sname;
-                }
-                const split = p.time.split(" ");
-                const year = split[0];
-                const month = split[1];
-                const day = split[2];
-                const time = split[3];
-                const total = `${year}년 ${month}월 ${day}일 ${time}시`;
-                return (
-                  <ListItem key={p.id}>
-                    <ListItemText primary={name} secondary={total} />
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        onClick={this.handleDeleteButton.bind(this, { p })}
-                        edge="end"
-                        aria-label="delete"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                );
-              })}
+              {this.state.favorites &&
+                this.state.favorites.map(p => {
+                  let name;
+                  if (p.sname === "") {
+                    name = p.hname;
+                  } else if (p.hname === "") {
+                    name = p.sname;
+                  }
+                  return (
+                    <ListItem key={name}>
+                      <ListItemText primary={name} />
+                      <ListItemSecondaryAction>
+                        <IconButton
+                          onClick={this.handleDeleteButton.bind(this, { p })}
+                          edge="end"
+                          aria-label="delete"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  );
+                })}
             </List>
           </div>
           <Dialog

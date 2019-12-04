@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import * as hospitalAPI from "lib/api/hospital";
 import * as storeAPI from "lib/api/store";
 import * as reservationAPI from "lib/api/reservation";
+import * as favoriteAPI from "lib/api/favorite";
 
 //for redux.
 import { connect } from "react-redux";
@@ -50,6 +51,8 @@ const GoogleMapContainer = withScriptjs(
       showingInfoWindow,
       handleReservationButton,
       handleFavoriteButton,
+      handleFavoriteDeleteButton,
+      isExistInFavorite,
       type
     } = props;
     let { isListSet } = props;
@@ -248,10 +251,16 @@ const GoogleMapContainer = withScriptjs(
                             text="예약하기"
                             handleButton={() => handleReservationButton()}
                           />
-                          <Button
-                            text="즐겨찾기에 추가"
-                            handleButton={() => handleFavoriteButton()}
-                          />
+                          {isExistInFavorite
+                            ? <Button
+                                text="즐겨찾기에서 삭제"
+                                handleButton={() =>
+                                  handleFavoriteDeleteButton()}
+                              />
+                            : <Button
+                                text="즐겨찾기에 추가"
+                                handleButton={() => handleFavoriteButton()}
+                              />}
                         </div>
                       </div>
                     </InfoBox>}
@@ -462,6 +471,25 @@ class GoogleMapComponent extends React.PureComponent {
   // };
 
   handleMarkerClick = async name => {
+    const { email } = this.props.loggedInfo.toJS();
+    const type = this.state.type;
+    let isExistInFavorite;
+    console.log(type);
+    if (type === "hospital") {
+      isExistInFavorite = await favoriteAPI.isExists({
+        uemail: email,
+        hname: name,
+        sname: ""
+      });
+    } else if (type === "store") {
+      isExistInFavorite = await favoriteAPI.isExists({
+        uemail: email,
+        hname: "",
+        sname: name
+      });
+    }
+    this.setState({ isExistInFavorite: isExistInFavorite.data });
+    console.log(isExistInFavorite.data);
     if (!this.state.showingInfoWindow) {
       this.setState({
         activeMarkerInfo: name,
@@ -493,7 +521,66 @@ class GoogleMapComponent extends React.PureComponent {
     });
   };
 
-  handleFavoriteButton = () => {
+  handleFavoriteButton = async () => {
+    const { email } = this.props.loggedInfo.toJS();
+    console.log(this.state.activeMarkerInfo);
+    if (
+      this.state.type === "hospital" &&
+      this.state.showFavoritePopup === false
+    ) {
+      await favoriteAPI.makeFavorite({
+        uemail: email,
+        hname: this.state.activeMarkerInfo,
+        sname: ""
+      });
+      this.setState({
+        isExistInFavorite: true
+      });
+    } else if (
+      this.state.type === "store" &&
+      this.state.showFavoritePopup === false
+    ) {
+      await favoriteAPI.makeFavorite({
+        uemail: email,
+        hname: "",
+        sname: this.state.activeMarkerInfo
+      });
+      this.setState({
+        isExistInFavorite: true
+      });
+    }
+    this.setState({
+      showFavoritePopup: !this.state.showFavoritePopup
+    });
+  };
+
+  handleFavoriteDeleteButton = async () => {
+    const { email } = this.props.loggedInfo.toJS();
+    if (
+      this.state.type === "hospital" &&
+      this.state.showFavoritePopup === false
+    ) {
+      await favoriteAPI.deleteFavorite({
+        uemail: email,
+        hname: this.state.activeMarkerInfo,
+        sname: ""
+      });
+      this.setState({
+        isExistInFavorite: false
+      });
+    } else if (
+      this.state.type === "store" &&
+      this.state.showFavoritePopup === false
+    ) {
+      await favoriteAPI.deleteFavorite({
+        uemail: email,
+        hname: "",
+        sname: this.state.activeMarkerInfo
+      });
+      this.setState({
+        isExistInFavorite: false
+      });
+    }
     this.setState({
       showFavoritePopup: !this.state.showFavoritePopup
     });
@@ -610,7 +697,9 @@ class GoogleMapComponent extends React.PureComponent {
           activeMarkerInfo={this.state.activeMarkerInfo}
           handleReservationButton={this.handleReservationButton}
           handleFavoriteButton={this.handleFavoriteButton}
+          handleFavoriteDeleteButton={this.handleFavoriteDeleteButton}
           isListSet={this.state.isListSet}
+          isExistInFavorite={this.state.isExistInFavorite}
           options={this.state.options}
           type={this.state.type}
         />
@@ -711,9 +800,13 @@ class GoogleMapComponent extends React.PureComponent {
             {this.state.activeMarkerInfo}
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              즐겨찾기에 추가되었습니다.
-            </DialogContentText>
+            {this.state.isExistInFavorite
+              ? <DialogContentText id="alert-dialog-description">
+                  즐겨찾기에 추가되었습니다.
+                </DialogContentText>
+              : <DialogContentText id="alert-dialog-description">
+                  즐겨찾기에 삭제되었습니다.
+                </DialogContentText>}
           </DialogContent>
           <DialogActions>
             <Button text="완료하기" handleButton={this.handleFavoriteButton} />

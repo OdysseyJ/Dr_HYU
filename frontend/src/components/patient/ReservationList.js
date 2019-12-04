@@ -73,34 +73,35 @@ class ReservationList extends Component {
         >
           <div>
             <List>
-              {this.state.reservations.map(p => {
-                let name;
-                if (p.sname === null) {
-                  name = p.hname;
-                } else if (p.hname === null) {
-                  name = p.sname;
-                }
-                const split = p.time.split(" ");
-                const year = split[0];
-                const month = split[1];
-                const day = split[2];
-                const time = split[3];
-                const total = `예약시간 : ${year}년 ${month}월 ${day}일 ${time}시`;
-                return (
-                  <ListItem key={p.id}>
-                    <ListItemText primary={name} secondary={total} />
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        onClick={this.handleDeleteButton.bind(this, { p })}
-                        edge="end"
-                        aria-label="delete"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                );
-              })}
+              {this.state.reservations &&
+                this.state.reservations.map(p => {
+                  let name;
+                  if (p.sname === null) {
+                    name = p.hname;
+                  } else if (p.hname === null) {
+                    name = p.sname;
+                  }
+                  const split = p.time.split(" ");
+                  const year = split[0];
+                  const month = split[1];
+                  const day = split[2];
+                  const time = split[3];
+                  const total = `예약시간 : ${year}년 ${month}월 ${day}일 ${time}시`;
+                  return (
+                    <ListItem key={p.id}>
+                      <ListItemText primary={name} secondary={total} />
+                      <ListItemSecondaryAction>
+                        <IconButton
+                          onClick={this.handleDeleteButton.bind(this, { p })}
+                          edge="end"
+                          aria-label="delete"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  );
+                })}
             </List>
           </div>
           <Dialog
