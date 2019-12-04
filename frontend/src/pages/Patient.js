@@ -1,21 +1,29 @@
 import React, { Component } from 'react'
-import { InfoList, SearchButton } from 'components/patient'
+import {
+  SearchButton,
+  ReservationList,
+  CurrentVisitList
+} from 'components/patient'
+import EyeIcon from '@material-ui/icons/Visibility'
+import Grid from '@material-ui/core/Grid'
 
 class Patient extends Component {
   render () {
     return (
       <div>
-        <h1>test</h1>
-        <h1>test</h1>
-
-        <h1>test</h1>
-
-        <h1>test</h1>
-
+        <h1>blank</h1>
         <SearchButton />
-        <InfoList List={this.props.myHospitals} />
-        <InfoList List={this.props.recentHospitals} />
-        <InfoList List={this.props.prescriptions} />
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <CurrentVisitList />
+          </Grid>
+          <Grid item xs={6}>
+            <ReservationList />
+          </Grid>
+          <Grid item xs={6}>
+            <ReservationList />
+          </Grid>
+        </Grid>
       </div>
     )
   }

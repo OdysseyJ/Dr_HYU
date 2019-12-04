@@ -8,28 +8,10 @@ const Joi = require('joi')
 
 // 한양대 근처 5km내의 모든 병원 정보 DBMS에 저장.
 ctrl.getDefaultHospitals = async ctx => {
-  console.log('start')
-  ctx.body = 'test'
   const key = process.env.APIKEY
   const xpos = process.env.HYU_lng
   const ypos = process.env.HYU_lat
   const radius = 5000
-  const options = {
-    uri:
-      'http://apis.data.go.kr/B551182/hospInfoService/getHospBasisList' +
-      '?ServiceKey=' +
-      key +
-      '&xPos=' +
-      xpos +
-      '&yPos=' +
-      ypos +
-      '&radius=' +
-      radius +
-      '&_type=json'
-  }
-  const response = await request(options)
-  const totalCount = JSON.parse(response).response.body.totalCount
-  console.log(totalCount)
   var pageNum = 1
   const numOfRows = 10
   for (var count = 0; count < 1; count++) {
@@ -55,7 +37,6 @@ ctrl.getDefaultHospitals = async ctx => {
     const response = await request(options)
     const hospital_arr = JSON.parse(response).response.body.items.item
     hospital_arr.map(async p => {
-      console.log(p.yadmNm)
       await db.Hospital.create({
         name: p.yadmNm,
         numOfDoctors: p.sdrCnt,
@@ -75,7 +56,6 @@ ctrl.getDefaultHospitals = async ctx => {
 // 3km 반경의 병원 리스트를 얻어서 db에 중복검사후 추가
 //
 ctrl.getHospitals = async ctx => {
-  console.log('gethospitals')
   // 스키마 만들기
   const schema = Joi.object().keys({
     lat: Joi.required(),
@@ -87,13 +67,11 @@ ctrl.getHospitals = async ctx => {
 
   // 스키마 검증 실패
   if (result.error) {
-    console.log('실패')
     ctx.status = 400
     return
   }
 
   const { lat, lng } = ctx.request.body
-  console.log(lat, lng)
   const key = process.env.APIKEY
   const HYU_lng = process.env.HYU_lng
   const HYU_lat = process.env.HYU_lat
@@ -162,7 +140,6 @@ ctrl.getHospitals = async ctx => {
       return p.dataValues
     })
 
-  console.log(validlist)
   if (validlist === null) {
     ctx.status = 200
     ctx.body = {}

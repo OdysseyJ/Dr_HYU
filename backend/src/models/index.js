@@ -5,8 +5,6 @@ const crypto = require('crypto')
 
 const { generateToken } = require(__dirname + '/../lib/token')
 
-const { computeDistance } = require(__dirname + '/../lib/computeDistance')
-
 const db = {}
 
 // 비밀번호 암호화 함수
@@ -26,11 +24,14 @@ const sequelize = new Sequelize(
 )
 
 // db사용을 위한 라우팅.
+
 db.Hospital = require('./hospital')(sequelize, Sequelize)
 db.Store = require('./store')(sequelize, Sequelize)
 db.User = require('./user')(sequelize, Sequelize)
 db.Prescription = require('./prescription')(sequelize, Sequelize)
 db.Reservation = require('./reservation')(sequelize, Sequelize)
+db.Favorite = require('./favorite')(sequelize, Sequelize)
+db.Log = require('./log')(sequelize, Sequelize)
 
 // ************* class / instance methods = [User]
 
@@ -102,23 +103,71 @@ db.Store.getAllStores = function () {
 }
 // ************* static method = [Store] 종료
 
+// ************* class / instance methods = [Log]
+db.Log.makeLog = function ({ type, time, prescription, uemail, hname, sname }) {
+  return db.Log.create({
+    type: type,
+    time: time,
+    prescription: prescription,
+    uemail: uemail,
+    hname: hname,
+    sname: sname
+  })
+}
+// ************* static method = [Log] 종료
+
+// ************* class / instance methods = [Reservation]
+db.Reservation.makeReservation = ({ time, uemail, hname, sname }) => {
+  return db.Reservation.create({
+    time: time,
+    uemail: uemail,
+    hname: hname,
+    sname: sname
+  })
+}
+
+db.Reservation.deleteReservation = ({ id }) => {
+  return db.Reservation.destroy({
+    where: { id: id }
+  })
+}
+
+db.Reservation.getPatientAllReservation = ({ uemail }) => {
+  return db.Reservation.findAll({
+    where: {
+      uemail: uemail
+    }
+  })
+}
+
+db.Reservation.getHospitalAllReservation = ({ hname }) => {
+  return db.Reservation.findAll({
+    where: {
+      hname: hname
+    }
+  })
+}
+
+db.Reservation.getStoreAllReservation = ({ sname }) => {
+  return db.Reservation.findAll({
+    where: {
+      sname: sname
+    }
+  })
+}
+// ************* static method = [Reservation] 종료
+
 // foreignkey 설정.
 db.Prescription.belongsTo(db.User, {
   foreignKey: 'uemail',
   targetKey: 'email'
 })
-db.Prescription.belongsTo(db.Hospital, {
-  foreignKey: 'hname',
-  targetKey: 'name'
-})
-db.Prescription.belongsTo(db.Store, { foreignKey: 'sname', targetKey: 'name' })
 
 db.Reservation.belongsTo(db.User, { foreignKey: 'uemail', targetKey: 'email' })
-db.Reservation.belongsTo(db.Hospital, {
-  foreignKey: 'hname',
-  targetKey: 'name'
-})
-db.Reservation.belongsTo(db.Store, { foreignKey: 'sname', targetKey: 'name' })
+
+db.Favorite.belongsTo(db.User, { foreignKey: 'uemail', targetKey: 'email' })
+
+db.Log.belongsTo(db.User, { foreignKey: 'uemail', targetKey: 'email' })
 
 db.sequelize = sequelize
 db.Sequelize = Sequelize

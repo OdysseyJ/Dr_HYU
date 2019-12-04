@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import * as mapAPI from "lib/api/map";
+import * as hospitalAPI from "lib/api/hospital";
+import * as storeAPI from "lib/api/store";
+import * as reservationAPI from "lib/api/reservation";
 
 //for redux.
 import { connect } from "react-redux";
@@ -29,19 +31,20 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 const { InfoBox } = require("react-google-maps/lib/components/addons/InfoBox");
 
+// for currentTime
 var moment = require("moment");
 moment().format();
-
-// for T
 
 // 구글맵 출력하는 컴포넌트.
 const GoogleMapContainer = withScriptjs(
   withGoogleMap(function(props) {
+    // 현재시간 받아오기 (hour)
     const currentHour = Number(String(moment()._d).split(" ")[4].split(":")[0]);
 
     const defaultlat = parseFloat(process.env.REACT_APP_HYU_LAT);
     const defaultlng = parseFloat(process.env.REACT_APP_HYU_LNG);
     const {
+      handleMapClick,
       handleMarkerClick,
       activeMarkerInfo,
       showingInfoWindow,
@@ -50,7 +53,7 @@ const GoogleMapContainer = withScriptjs(
     } = props;
     let { isListSet } = props;
     const { ALL, all, search, Pharmacy, GlassStore } = props.options;
-    console.log("googlemapContainer", props.list, props.options);
+
     if (isListSet) {
       // option에 따라 보여줄 마커 결정하기.
       const infoList = props.list.filter(p => {
@@ -64,8 +67,7 @@ const GoogleMapContainer = withScriptjs(
               if (p.department === "종합병원") return p;
             }
           } else if (search.value === p.name) return p;
-        }
-        if (type === "store") {
+        } else if (type === "store") {
           if (!Pharmacy && !GlassStore && search === "") return p;
           if (search === "") {
             if (Pharmacy) {
@@ -76,32 +78,189 @@ const GoogleMapContainer = withScriptjs(
             }
           } else if (search.value === p.name) return p;
         }
+        return null;
       });
 
+      // 현재 예약가능한 리스트
       const availableList = infoList.filter(p => {
         const startHour = Number(p.openTime.split("~")[0].split(":")[0]);
         const closeHour = Number(p.openTime.split("~")[1].split(":")[0]);
         if (currentHour >= startHour && currentHour < closeHour) {
           return p;
         }
+        return null;
       });
 
+      // 현재 예약불가능한 리스트
       const unavailableList = infoList.filter(p => {
         const startHour = Number(p.openTime.split("~")[0].split(":")[0]);
         const closeHour = Number(p.openTime.split("~")[1].split(":")[0]);
-        if (currentHour < startHour && currentHour >= closeHour) {
+        if (currentHour < startHour || currentHour >= closeHour) {
           return p;
         }
+        return null;
       });
-
-      console.log(infoList);
+      // 맵과 마커 출력.
       return (
         <GoogleMap
           defaultZoom={13}
           defaultCenter={{ lat: defaultlat, lng: defaultlng }}
+          onClick={handleMapClick}
         >
-          {infoList !== null &&
-            infoList.map(function(info) {
+          {availableList !== null &&
+            availableList.map(function(info) {
+              const { department } = info;
+              return (
+                <Marker
+                  key={info.name}
+                  position={{
+                    lat: parseFloat(info.lat),
+                    lng: parseFloat(info.lng)
+                  }}
+                  onClick={() => handleMarkerClick(info.name)}
+                  icon={
+                    props.type === "store" && department === "안경점"
+                      ? {
+                          url:
+                            "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
+                        }
+                      : {
+                          url:
+                            "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                        }
+                  }
+                >
+                  {showingInfoWindow &&
+                    activeMarkerInfo !== null &&
+                    info.name === activeMarkerInfo &&
+                    <InfoBox
+                      options={{
+                        closeBoxURL: ``,
+                        enableEventPropagation: true
+                      }}
+                    >
+                      <div
+                        style={{
+                          backgroundColor: "white",
+                          opacity: 1,
+                          padding: `15px`
+                        }}
+                      >
+                        {props.type === "hospital" &&
+                          <div>
+                            <div
+                              style={{
+                                fontSize: `15px`,
+                                fontColor: `#08233B`
+                              }}
+                            >
+                              {info.name}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: `12px`,
+                                fontColor: `#08233B`
+                              }}
+                            >
+                              분류 : {info.department}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: `12px`,
+                                fontColor: `#08233B`
+                              }}
+                            >
+                              주소 : {info.address}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: `12px`,
+                                fontColor: `#08233B`
+                              }}
+                            >
+                              전문의 수 : {info.numOfDoctors}명
+                            </div>
+                            <div
+                              style={{
+                                fontSize: `12px`,
+                                fontColor: `#08233B`
+                              }}
+                            >
+                              진료 요일 : {info.openDay}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: `12px`,
+                                fontColor: `#08233B`
+                              }}
+                            >
+                              진료 시간 : {info.openTime}
+                            </div>
+                            <div style={{ paddingTop: 5 }} />
+                            <div style={{ textAlign: "center" }}>
+                              <Button
+                                text="예약하기"
+                                handleButton={() => handleReservationButton()}
+                              />
+                            </div>
+                          </div>}
+                        {props.type === "store" &&
+                          <div>
+                            <div
+                              style={{
+                                fontSize: `15px`,
+                                fontColor: `#08233B`
+                              }}
+                            >
+                              {info.name}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: `12px`,
+                                fontColor: `#08233B`
+                              }}
+                            >
+                              분류 : {info.department}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: `12px`,
+                                fontColor: `#08233B`
+                              }}
+                            >
+                              주소 : {info.address}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: `12px`,
+                                fontColor: `#08233B`
+                              }}
+                            >
+                              영업 요일 : {info.openDay}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: `12px`,
+                                fontColor: `#08233B`
+                              }}
+                            >
+                              영업 시간 : {info.openTime}
+                            </div>
+                            <div style={{ paddingTop: 5 }} />
+                            <div style={{ textAlign: "center" }}>
+                              <Button
+                                text="예약하기"
+                                handleButton={() => handleReservationButton()}
+                              />
+                            </div>
+                          </div>}
+                      </div>
+                    </InfoBox>}
+                </Marker>
+              );
+            })}
+          {unavailableList !== null &&
+            unavailableList.map(function(info) {
               return (
                 <Marker
                   key={info.name}
@@ -111,7 +270,7 @@ const GoogleMapContainer = withScriptjs(
                   }}
                   onClick={() => handleMarkerClick(info.name)}
                   icon={{
-                    url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                    url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
                   }}
                 >
                   {showingInfoWindow &&
@@ -130,7 +289,7 @@ const GoogleMapContainer = withScriptjs(
                           padding: `15px`
                         }}
                       >
-                        {props.type === "patient" &&
+                        {props.type === "hospital" &&
                           <div>
                             <div
                               style={{ fontSize: `15px`, fontColor: `#08233B` }}
@@ -164,11 +323,7 @@ const GoogleMapContainer = withScriptjs(
                             </div>
                             <div style={{ paddingTop: 5 }} />
                             <div style={{ textAlign: "center" }}>
-                              <Button
-                                text="예약하기"
-                                handleButton={() =>
-                                  handleReservationButton(info.name)}
-                              />
+                              <Button text="지금은 예약 가능한 시간이 아닙니다" />
                             </div>
                           </div>}
                         {props.type === "store" &&
@@ -200,11 +355,7 @@ const GoogleMapContainer = withScriptjs(
                             </div>
                             <div style={{ paddingTop: 5 }} />
                             <div style={{ textAlign: "center" }}>
-                              <Button
-                                text="예약하기"
-                                handleButton={() =>
-                                  handleReservationButton(info.name)}
-                              />
+                              <Button text="지금은 예약 가능한 시간이 아닙니다" />
                             </div>
                           </div>}
                       </div>
@@ -226,43 +377,64 @@ GoogleMapContainer.propTypes = {
 };
 
 class GoogleMapComponent extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    console.log("constructor");
-  }
-
   state = {
     type: "",
     isMarkerShown: false,
     isListSet: false,
+    isAllSelect: false,
     list: {},
     activeMarkerInfo: {},
     showingInfoWindow: false,
     showPopup: false,
-    selectedTime: {},
+    selectedYear: "",
+    selectedMonth: "",
+    selectedDay: "",
+    selectedTime: "",
     options: {}
+  };
+
+  time = ["09~10", "10~11", "11~12", "13~14", "14~15", "15~16", "16~17"];
+  year = () => {
+    var arr = new Array(10);
+    for (var i = 2019; i < 2030; i++) {
+      arr[i - 2019] = i;
+    }
+    return arr;
+  };
+
+  month = () => {
+    var arr = new Array(12);
+    for (var i = 1; i <= 12; i++) {
+      arr[i - 1] = i;
+    }
+    return arr;
+  };
+
+  day = () => {
+    var arr = new Array(31);
+    for (var i = 1; i <= 31; i++) {
+      arr[i - 1] = i;
+    }
+    return arr;
   };
 
   getList = async () => {
     const { type, options } = this.props;
     await this.setState({ type: type, options: options });
     const { lat, lng } = this.props.loggedInfo.toJS();
-    console.log(lat, lng);
     if (this.state.type === "hospital") {
-      const hospitalList = await mapAPI.getNearHospitals({
+      const hospitalList = await hospitalAPI.getNearHospitals({
         lat: lat,
         lng: lng
       });
-      console.log(hospitalList);
       await this.setState({ isListSet: true, list: hospitalList.data });
     }
     if (this.state.type === "store") {
-      const hospitalList = await mapAPI.getNearDrugstores({
+      const storeList = await storeAPI.getNearStores({
         lat: lat,
         lng: lng
       });
-      console.log(hospitalList);
-      await this.setState({ isListSet: true, list: hospitalList.data });
+      await this.setState({ isListSet: true, list: storeList.data });
     }
   };
 
@@ -274,7 +446,6 @@ class GoogleMapComponent extends React.PureComponent {
   }
 
   componentDidMount() {
-    console.log("componentdidmount");
     this.getList();
     this.delayedShowMarker();
   }
@@ -285,38 +456,137 @@ class GoogleMapComponent extends React.PureComponent {
     }, 1000);
   };
 
+  // handleMapClick = () => {
+  //   this.setState({ showingInfoWindow: !this.state.showingInfoWindow });
+  // };
+
   handleMarkerClick = name => {
-    console.log(name);
     if (!this.state.showingInfoWindow) {
+      this.setState({
+        activeMarkerInfo: name,
+        showingInfoWindow: true
+      });
+    } else if (
+      this.state.showingInfoWindow &&
+      this.state.activeMarkerInfo === name
+    ) {
       this.setState({
         activeMarkerInfo: name,
         showingInfoWindow: !this.state.showingInfoWindow
       });
     } else {
       this.setState({
-        activeMarkerInfo: null,
-        showingInfoWindow: !this.state.showingInfoWindow
+        activeMarkerInfo: name
       });
     }
   };
 
   handleReservationButton = () => {
-    this.setState({ showPopup: !this.state.showPopup });
+    this.setState({
+      selectedYear: "",
+      selectedMonth: "",
+      selectedDay: "",
+      selectedTime: "",
+      isAllSelect: false,
+      showPopup: !this.state.showPopup
+    });
   };
 
   handleSelectChange = selectedOption => {
+    const name = selectedOption.target.name;
     const value = selectedOption.target.value;
-    console.log(value);
-    this.setState({ selectedTime: value });
+    const {
+      selectedYear,
+      selectedMonth,
+      selectedDay,
+      selectedTime
+    } = this.state;
+    if (name === "year") {
+      if (selectedMonth !== "" && selectedDay !== "" && selectedTime !== "") {
+        this.setState({
+          isAllSelect: true,
+          selectedYear: value
+        });
+      } else {
+        this.setState({
+          selectedYear: value
+        });
+      }
+    } else if (name === "month") {
+      if (selectedYear !== "" && selectedDay !== "" && selectedTime !== "") {
+        this.setState({
+          isAllSelect: true,
+          selectedMonth: value
+        });
+      } else {
+        this.setState({
+          selectedMonth: value
+        });
+      }
+    } else if (name === "day") {
+      if (selectedYear !== "" && selectedMonth !== "" && selectedTime !== "") {
+        this.setState({
+          isAllSelect: true,
+          selectedDay: value
+        });
+      } else {
+        this.setState({
+          selectedDay: value
+        });
+      }
+    } else if (name === "time") {
+      if (selectedYear !== "" && selectedMonth !== "" && selectedDay !== "") {
+        this.setState({
+          isAllSelect: true,
+          selectedTime: value
+        });
+      } else {
+        this.setState({
+          selectedTime: value
+        });
+      }
+    }
   };
 
-  handleCompleteButton = () => {
-    console.log("complete");
-    this.setState({ showPopup: !this.state.showPopup });
+  handleCompleteButton = async () => {
+    // props에서 useremail과 sname, hname을 받아오기.
+    const {
+      selectedYear,
+      selectedMonth,
+      selectedDay,
+      selectedTime
+    } = this.state;
+    if (this.state.isAllSelect === false) {
+      return;
+    }
+    const totalTime = `${selectedYear} ${selectedMonth} ${selectedDay} ${selectedTime}`;
+    const { email } = this.props.loggedInfo.toJS();
+    let hname = null;
+    let sname = null;
+
+    if (this.state.type === "store") {
+      sname = this.state.activeMarkerInfo;
+    } else if (this.state.type === "hospital") {
+      hname = this.state.activeMarkerInfo;
+    }
+
+    await reservationAPI.makeReservation({
+      time: totalTime,
+      uemail: email,
+      sname: sname,
+      hname: hname
+    });
+    this.setState({
+      selectedYear: "",
+      selectedMonth: "",
+      selectedDay: "",
+      selectedTime: "",
+      isAllSelect: false,
+      showPopup: !this.state.showPopup
+    });
   };
 
   render() {
-    console.log("render", this.state.list);
     return (
       <div>
         <GoogleMapContainer
@@ -327,6 +597,7 @@ class GoogleMapComponent extends React.PureComponent {
           containerElement={<div style={{ height: `400px` }} />}
           mapElement={<div style={{ height: `100%` }} />}
           list={this.state.list}
+          handleMapClick={this.handleMapClick}
           handleMarkerClick={this.handleMarkerClick}
           showingInfoWindow={this.state.showingInfoWindow}
           activeMarkerInfo={this.state.activeMarkerInfo}
@@ -345,29 +616,80 @@ class GoogleMapComponent extends React.PureComponent {
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              예약하실 시간을 선택하세요
+              예약할 날짜를 선택
             </DialogContentText>
+            {this.state.isAllSelect ? <div /> : <div>모든 박스를 선택해주세요!</div>}
           </DialogContent>
           <DialogActions>
-            <InputLabel htmlFor="selected">selected</InputLabel>
             <Select
+              labelId="select_year"
+              id="year"
+              name="year"
+              autoFocus
+              value={this.state.selectedYear}
+              onChange={this.handleSelectChange}
+            >
+              {this.year().map(p => {
+                return (
+                  <MenuItem key={p} value={p}>
+                    {p}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+            <InputLabel id="select_year">년</InputLabel>
+
+            <Select
+              labelId="select_month"
+              id="month"
+              name="month"
+              autoFocus
+              value={this.state.selectedMonth}
+              onChange={this.handleSelectChange}
+            >
+              {this.month().map(p => {
+                return (
+                  <MenuItem key={p} value={p}>
+                    {p}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+            <InputLabel id="select_month">월</InputLabel>
+            <Select
+              labelId="select_day"
+              id="day"
+              name="day"
+              autoFocus
+              value={this.state.selectedDay}
+              onChange={this.handleSelectChange}
+            >
+              {this.day().map(p => {
+                return (
+                  <MenuItem key={p} value={p}>
+                    {p}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+            <InputLabel id="select_day">일</InputLabel>
+            <Select
+              labelId="select_time"
+              id="time"
+              name="time"
               autoFocus
               value={this.state.selectedTime}
               onChange={this.handleSelectChange}
-              inputProps={{
-                name: "selected",
-                id: "selected"
-              }}
             >
-              <MenuItem value={false}>false</MenuItem>
-              <MenuItem value="09~10">09~10</MenuItem>
-              <MenuItem value="10~11">10~11</MenuItem>
-              <MenuItem value="11~12">11~12</MenuItem>
-              <MenuItem value="13~14">13~14</MenuItem>
-              <MenuItem value="14~15">14~15</MenuItem>
-              <MenuItem value="15~16">15~16</MenuItem>
-              <MenuItem value="16~17">16~17</MenuItem>
+              {this.time.map(p => {
+                return (
+                  <MenuItem key={p} value={p}>
+                    {p}
+                  </MenuItem>
+                );
+              })}
             </Select>
+            <InputLabel id="select_time">시</InputLabel>
             <Button text="취소하기" handleButton={this.handleReservationButton} />
             <Button text="완료하기" handleButton={this.handleCompleteButton} />
           </DialogActions>

@@ -1,20 +1,18 @@
 const Router = require('koa-router')
 const router = new Router()
 
-const drugstoreInfoService = require('./drugstoreInfoService')
+const storeInfoService = require('./storeInfoService')
 const hospitalInfoService = require('./hospitalInfoService')
-const glassstoreInfoService = require('./glassstoreInfoService')
-const hospital = require('./hospital')
-const patient = require('./patient')
-const store = require('./store')
+const prescription = require('./prescription')
+const reservation = require('./reservation')
+const favorite = require('./favorite')
 const login = require('./login')
 
-router.use('/drugstoreInfoService', drugstoreInfoService.routes())
+router.use('/storeInfoService', storeInfoService.routes())
 router.use('/hospitalInfoService', hospitalInfoService.routes())
-router.use('/glassstoreInfoService', glassstoreInfoService.routes())
-router.use('/hospital', hospital.routes())
-router.use('/patient', patient.routes())
-router.use('/store', store.routes())
+router.use('/prescription', prescription.routes())
+router.use('/reservation', reservation.routes())
+router.use('/favorite', favorite.routes())
 router.use('/login', login.routes())
 
 module.exports = router

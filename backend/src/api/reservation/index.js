@@ -3,7 +3,8 @@ const router = new Router()
 
 const ctrl = require('./index.ctrl')
 
-router.get('/', ctrl.getDefaultDrugstores)
-router.post('/', ctrl.getDrugstores)
+router.post('/make', ctrl.postreservation)
+router.post('/delete', ctrl.deletereservation)
+router.get('/', ctrl.getreservations)
 
 module.exports = router

@@ -3,6 +3,14 @@ module.exports = (sequelize, Sequelize) => {
     time: {
       type: Sequelize.STRING,
       allowNull: false
+    },
+    hname: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    sname: {
+      type: Sequelize.STRING,
+      allowNull: true
     }
   })
 }
