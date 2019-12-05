@@ -4,7 +4,6 @@ import {
   PrescriptionButton,
   PrescriptionLog
 } from 'components/Hospital'
-import Grid from '@material-ui/core/Grid'
 
 class Hospital extends Component {
   render () {

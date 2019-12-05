@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
-import { StyledLink } from 'components/Util'
+import { StyledLink, StyledButton } from 'components/Util'
 
 class Buttons extends Component {
   render () {
+    console.log(this.props)
     return (
       <div>
         <StyledLink to='/'>돌아가기</StyledLink>
+        <StyledButton onClick={this.props.handleComplete}>처방완료</StyledButton>
       </div>
     )
   }

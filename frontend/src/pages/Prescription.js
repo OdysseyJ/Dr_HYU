@@ -1,33 +1,36 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 import {
-  Buttons,
   DrugstoreForm,
   GlassstoreForm,
   HospitalForm
-} from 'components/Prescription'
+} from "components/Prescription";
 
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as userActions from 'redux/modules/user'
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import * as userActions from "redux/modules/user";
 
 class Prescription extends Component {
-  render () {
-    const { email } = this.props.loggedInfo.toJS()
+  state = {};
+
+  render() {
+    const { usertype } = this.props.loggedInfo.toJS();
     return (
       <div>
         <h1>space</h1>
-        <Buttons />
+        {usertype === "hospital"
+          ? <HospitalForm hname={this.props.loggedInfo.toJS().name} />
+          : <div />}
       </div>
-    )
+    );
   }
 }
 
 export default connect(
   state => ({
-    loggedInfo: state.user.get('loggedInfo'),
-    logged: state.user.get('logged')
+    loggedInfo: state.user.get("loggedInfo"),
+    logged: state.user.get("logged")
   }),
   dispatch => ({
     UserActions: bindActionCreators(userActions, dispatch)
   })
-)(Prescription)
+)(Prescription);

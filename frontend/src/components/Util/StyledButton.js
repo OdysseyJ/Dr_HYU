@@ -1,9 +1,8 @@
-import React from 'react'
 import styled from 'styled-components'
 import oc from 'open-color'
 import { shadow } from 'lib/styleUtils'
 
-const BorderedButton = styled.button`
+const StyledButton = styled.button`
   font-weight: 600;
   font-size: 15px;
   color: ${oc.orange[6]};
@@ -27,8 +26,4 @@ const BorderedButton = styled.button`
   }
 `
 
-const LogoutButton = ({ onClick }) => {
-  return <BorderedButton onClick={onClick}>로그아웃</BorderedButton>
-}
-
-export default LogoutButton
+export default StyledButton

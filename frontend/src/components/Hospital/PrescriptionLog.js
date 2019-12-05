@@ -57,6 +57,7 @@ class PrescriptionLog extends Component {
   };
 
   handleEyeButton = (data, e) => {
+    console.log(data);
     const { id } = data.p.prescription;
     this.setState({ isPopupShow: true, selectedId: id });
   };
@@ -142,12 +143,23 @@ class PrescriptionLog extends Component {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">처방전</DialogTitle>
-            {this.state.logs &&
-              this.state.logs.map(p => {
-                if (p.id === this.state.selectedId) {
+            {this.state.lists &&
+              this.state.lists.map(p => {
+                console.log(p);
+                if (p.prescription.id === this.state.selectedId) {
+                  const {
+                    name,
+                    patientName,
+                    date,
+                    number,
+                    medicineName,
+                    amount,
+                    count,
+                    totalDay
+                  } = JSON.parse(p.prescription.prescription);
                   return (
                     <div
-                      key={p}
+                      key={p.prescription.id}
                       style={{
                         paddingLeft: 10,
                         paddingTop: 10,
@@ -155,11 +167,34 @@ class PrescriptionLog extends Component {
                         paddingBottom: 10
                       }}
                     >
-                      {p.prescription}
+                      <div>
+                        처방한곳 : {name}
+                      </div>
+                      <div>
+                        환자이메일 : {patientName}
+                      </div>
+                      <div>
+                        날짜 : {date}
+                      </div>
+                      <div>
+                        호 : {number}
+                      </div>
+                      <div>
+                        처방받은약 : {medicineName}
+                      </div>
+                      <div>
+                        1회투약량 : {amount}정
+                      </div>
+                      <div>
+                        1일투여횟수 : {count}회
+                      </div>
+                      <div>
+                        총 투여일 : {totalDay}일
+                      </div>
                     </div>
                   );
                 }
-                return <div key={p} />;
+                return <div key={p.prescription.id} />;
               })}
 
             <DialogActions>

@@ -28,6 +28,7 @@ class PrescriptionList extends Component {
     const prescriptions = await prescriptionAPI.getPrescriptions({
       uemail: email
     });
+    console.log(prescriptions);
     this.setState({ prescriptions: prescriptions.data });
   };
 
@@ -61,9 +62,9 @@ class PrescriptionList extends Component {
               {this.state.prescriptions &&
                 this.state.prescriptions.map(p => {
                   let name;
-                  if (p.sname === "") {
+                  if (p.sname === null) {
                     name = p.hname;
-                  } else if (p.hname === "") {
+                  } else if (p.hname === null) {
                     name = p.sname;
                   }
                   return (
