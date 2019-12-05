@@ -5,7 +5,7 @@ const ctrl = require('./index.ctrl')
 
 router.post('/register/local', ctrl.localRegister)
 router.post('/local', ctrl.localLogin)
-router.get('/exists/:key(email|name)/:value', ctrl.exists)
+router.get('/exists/:key(email|hname|sname)/:value', ctrl.exists)
 router.post('/logout', ctrl.logout)
 router.get('/check', ctrl.check)
 

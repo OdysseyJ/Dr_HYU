@@ -2,8 +2,10 @@ import axios from 'axios'
 
 export const checkEmailExists = email =>
   axios.get('/api/login/exists/email/' + email)
-export const checkUsernameExists = username =>
-  axios.get('/api/login/exists/name/' + username)
+export const checkHospitalExists = hname =>
+  axios.get('/api/login/exists/hname/' + hname)
+export const checkStoreExists = sname =>
+  axios.get('/api/login/exists/sname/' + sname)
 
 export const localLogin = ({ email, password }) =>
   axios.post('/api/login/local', { email, password })

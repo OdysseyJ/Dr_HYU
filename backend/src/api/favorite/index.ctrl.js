@@ -3,7 +3,6 @@ const db = require(__dirname + '/../../models')
 
 ctrl.makeFavorite = async ctx => {
   const { uemail, sname, hname } = ctx.request.body
-  console.log(ctx.request.body)
   await db.Favorite.makeFavorite({
     uemail: uemail,
     hname: hname,

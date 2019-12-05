@@ -8,7 +8,7 @@ ctrl.localRegister = async ctx => {
   // 스키마 만들기
   const schema = Joi.object().keys({
     usertype: Joi.string().required(),
-    name: Joi.string().alphanum().min(4).max(15).required(),
+    name: Joi.string().min(3).max(20).required(),
     phonenum: Joi.string().min(11).required(),
     email: Joi.string().required(),
     password: Joi.string().required().min(6),
@@ -130,9 +130,13 @@ ctrl.exists = async ctx => {
   let account = null
 
   try {
-    account = await (key === 'email'
-      ? db.User.findByEmail(value)
-      : db.User.findByUsername(value))
+    if (key === 'email') {
+      account = await db.User.findByEmail(value)
+    } else if (key === 'hname') {
+      account = await db.Hospital.findByHospitalName(value)
+    } else if (key === 'sname') {
+      account = await db.Store.findByStoreName(value)
+    }
   } catch (e) {
     ctx.throw(500, e)
   }

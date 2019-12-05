@@ -109,12 +109,27 @@ class Register extends Component {
     }
   }, 300);
 
-  checkUsernameExists = debounce(async name => {
+  checkHospitalExists = debounce(async name => {
     const { AuthActions } = this.props;
     try {
-      await AuthActions.checkUsernameExists(name);
-      if (this.props.exists.get("name")) {
-        this.setError("이미 존재하는 아이디입니다.");
+      await AuthActions.checkHospitalExists(name);
+      console.log(this.props.exists.get("hospital"));
+      if (!this.props.exists.get("hospital")) {
+        this.setError("등록되지 않은 병원입니다.");
+      } else {
+        this.setError(null);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, 300);
+
+  checkStoreExists = debounce(async name => {
+    const { AuthActions } = this.props;
+    try {
+      await AuthActions.checkStoreExists(name);
+      if (!this.props.exists.get("store")) {
+        this.setError("등록되지 않은 상점입니다.");
       } else {
         this.setError(null);
       }
@@ -128,17 +143,7 @@ class Register extends Component {
     const value = { selectedOption }.selectedOption.value;
     const name = "usertype";
 
-    AuthActions.changeInput({
-      name,
-      value,
-      form: "register"
-    });
-  };
-
-  handleChange = e => {
-    const { AuthActions } = this.props;
-    const { name, value } = e.target;
-
+    console.log("select change");
     AuthActions.changeInput({
       name,
       value,
@@ -149,10 +154,40 @@ class Register extends Component {
     const validation = this.validate[name](value);
     if (name.indexOf("password") > -1 || !validation) return; // 비밀번호 검증이거나, 검증 실패하면 여기서 마침
 
-    // TODO: 이메일, 아이디 중복 확인
-    const check =
-      name === "email" ? this.checkEmailExists : this.checkUsernameExists; // name 에 따라 이메일체크할지 아이디 체크 할지 결정
-    check(value);
+    this.setError(null);
+  };
+
+  handleChange = e => {
+    const { AuthActions } = this.props;
+    const { name, value } = e.target;
+    const { usertype, email } = this.props.form.toJS();
+
+    console.log(usertype, email);
+    AuthActions.changeInput({
+      name,
+      value,
+      form: "register"
+    });
+
+    // 검증작업 진행
+    const validation = this.validate[name](value);
+    if (name.indexOf("password") > -1 || !validation) return; // 비밀번호 검증이거나, 검증 실패하면 여기서 마침
+
+    if (name === "email") {
+      this.checkEmailExists(value);
+    } else if (name === "name") {
+      if (
+        usertype !== "patient" &&
+        usertype !== "hospital" &&
+        usertype !== "store"
+      ) {
+        this.setError("회원타입을 먼저 선택하세요.");
+      } else if (usertype === "hospital") {
+        this.checkHospitalExists(value);
+      } else if (usertype === "store") {
+        this.checkStoreExists(value);
+      }
+    }
   };
 
   componentWillUnmount() {

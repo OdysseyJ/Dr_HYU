@@ -64,11 +64,6 @@ db.User.findByEmail = function (email) {
   })
 }
 
-db.User.findByUsername = function (username) {
-  // 객체에 내장되어있는 값을 사용 할 때는 객체명.키 이런식으로 쿼리하면 됩니다
-  return db.User.findOne({ where: { name: username } })
-}
-
 db.User.prototype.validatePassword = function (password) {
   const hashed = hash(password)
   return this.password === hashed
@@ -95,11 +90,19 @@ db.User.prototype.generateToken = function () {
 db.Hospital.getAllHospitals = function () {
   return db.Hospital.findAll()
 }
+
+db.Hospital.findByHospitalName = function (hname) {
+  return db.Hospital.findOne({ where: { name: hname } })
+}
 // ************* static method = [Hospital] 종료
 
 // ************* class / instance methods = [Store]
 db.Store.getAllStores = function () {
   return db.Store.findAll()
+}
+
+db.Store.findByStoreName = function (sname) {
+  return db.Store.findOne({ where: { name: sname } })
 }
 // ************* static method = [Store] 종료
 

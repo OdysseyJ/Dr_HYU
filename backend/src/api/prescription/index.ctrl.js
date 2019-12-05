@@ -18,6 +18,13 @@ ctrl.makePrescription = async ctx => {
     hname: hname,
     sname: sname
   })
+  await db.Log.makeLog({
+    type: 'prescription',
+    prescription: prescription,
+    uemail: uemail,
+    hname: hname,
+    sname: sname
+  })
   ctx.body = 'ok'
   ctx.status = 200
 }
