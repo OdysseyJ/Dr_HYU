@@ -149,4 +149,11 @@ ctrl.getHospitals = async ctx => {
   }
 }
 
+ctrl.getHospitalByName = async ctx => {
+  const { hname } = ctx.request.query
+  const hospital = await db.Hospital.findByHospitalName(hname)
+  ctx.body = hospital
+  ctx.status = 200
+}
+
 module.exports = ctrl

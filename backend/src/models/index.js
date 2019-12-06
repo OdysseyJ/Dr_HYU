@@ -104,13 +104,30 @@ db.Store.getAllStores = function () {
 db.Store.findByStoreName = function (sname) {
   return db.Store.findOne({ where: { name: sname } })
 }
+
+db.Store.setPrescriptionPossible = ({ sname, ispossible }) => {
+  return db.Store.update(
+    { prescription: ispossible },
+    { where: { name: sname } }
+  )
+}
+
 // ************* static method = [Store] 종료
 
 // ************* class / instance methods = [Log]
-db.Log.makeLog = function ({ type, time, prescription, uemail, hname, sname }) {
+db.Log.makeLog = function ({
+  logtype,
+  time,
+  prescriptiontype,
+  prescription,
+  uemail,
+  hname,
+  sname
+}) {
   return db.Log.create({
-    type: type,
+    logtype: logtype,
     time: time,
+    prescriptiontype: prescriptiontype,
     prescription: prescription,
     uemail: uemail,
     hname: hname,
@@ -146,12 +163,14 @@ db.Log.getAllStoreLogs = ({ sname }) => {
 
 // ************* class / instance methods = [Prescription]
 db.Prescription.makePrescription = function ({
+  prescriptiontype,
   prescription,
   uemail,
   hname,
   sname
 }) {
   return db.Prescription.create({
+    prescriptiontype: prescriptiontype,
     prescription: prescription,
     uemail: uemail,
     hname: hname,
@@ -165,6 +184,21 @@ db.Prescription.getAllPrescription = ({ uemail }) => {
       uemail: uemail
     }
   })
+}
+
+db.Prescription.updateById = ({ prescriptionId, prescription, sname }) => {
+  console.log(prescriptionId, prescription, sname)
+  return db.Prescription.update(
+    {
+      prescription: prescription,
+      sname: sname
+    },
+    {
+      where: {
+        id: prescriptionId
+      }
+    }
+  )
 }
 
 // ************* static method = [Prescription] 종료

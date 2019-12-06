@@ -11,18 +11,51 @@ ctrl.getAllPrescription = async ctx => {
 }
 
 ctrl.makePrescription = async ctx => {
-  const { prescription, uemail, hname, sname } = ctx.request.body
+  const {
+    prescriptiontype,
+    prescription,
+    uemail,
+    hname,
+    sname
+  } = ctx.request.body
   await db.Prescription.makePrescription({
+    prescriptiontype: prescriptiontype,
     prescription: prescription,
     uemail: uemail,
     hname: hname,
     sname: sname
   })
   await db.Log.makeLog({
-    type: 'prescription',
+    logtype: 'prescription',
+    prescriptiontype: prescriptiontype,
     prescription: prescription,
     uemail: uemail,
     hname: hname,
+    sname: sname
+  })
+  ctx.body = 'ok'
+  ctx.status = 200
+}
+
+ctrl.updatePrescription = async ctx => {
+  const {
+    prescriptiontype,
+    prescriptionId,
+    prescription,
+    uemail,
+    sname
+  } = ctx.request.body
+  await db.Prescription.updateById({
+    prescriptionId: prescriptionId,
+    prescription: prescription,
+    sname: sname
+  })
+  await db.Log.makeLog({
+    logtype: 'prescription',
+    prescriptiontype: prescriptiontype,
+    prescription: prescription,
+    uemail: uemail,
+    hname: null,
     sname: sname
   })
   ctx.body = 'ok'

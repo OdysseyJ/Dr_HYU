@@ -214,4 +214,21 @@ ctrl.getStores = async ctx => {
   }
 }
 
+ctrl.setPrescriptionPossible = async ctx => {
+  const { sname, ispossible } = ctx.request.body
+  await db.Store.setPrescriptionPossible({
+    sname: sname,
+    ispossible: ispossible
+  })
+  ctx.body = 'ok'
+  ctx.status = 200
+}
+
+ctrl.getStoreByName = async ctx => {
+  const { sname } = ctx.request.query
+  console.log(sname)
+  ctx.body = await db.Store.findByStoreName(sname)
+  ctx.status = 200
+}
+
 module.exports = ctrl

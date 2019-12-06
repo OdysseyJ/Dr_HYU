@@ -11,7 +11,7 @@ ctrl.postreservation = async ctx => {
     sname: sname
   })
   await db.Log.makeLog({
-    type: 'reservation',
+    logtype: 'reservation',
     time: time,
     uemail: uemail,
     hname: hname,

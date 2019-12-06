@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   return sequelize.define('log', {
-    type: {
+    logtype: {
       type: Sequelize.STRING,
       allowNull: false
     },
@@ -8,8 +8,12 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       allowNull: true
     },
-    prescription: {
+    prescriptiontype: {
       type: Sequelize.STRING,
+      allowNull: true
+    },
+    prescription: {
+      type: Sequelize.STRING(1000),
       allowNull: true
     },
     hname: {
