@@ -69,17 +69,17 @@ function TextMaskDate2 (props) {
   )
 }
 
-export default function HospitalForm (props) {
+export default function GlassHospitalForm (props) {
   const classes = useStyles()
   const [values, setValues] = React.useState({
     name: props.hname,
     patientName: '',
     date: '   년  월  일  시  분',
     number: '제   호',
-    medicineName: '',
-    amount: '',
-    count: '',
-    totalDay: '',
+    nakedlefteye: '',
+    nakedrighteye: '',
+    lefteye: '',
+    righteye: '',
     showError: false,
     showComplete: false
   })
@@ -106,7 +106,7 @@ export default function HospitalForm (props) {
     } else {
       setValues({ ...values, showError: true })
       await prescriptionAPI.makePrescription({
-        prescriptiontype: 'medicine',
+        prescriptiontype: 'glasses',
         prescription: JSON.stringify(values),
         uemail: values.patientName,
         hname: props.hname,
@@ -138,7 +138,7 @@ export default function HospitalForm (props) {
         </FormControl>
         <FormControl className={classes.formControl}>
           <Input
-            placeholder='환자성명'
+            placeholder='환자이메일'
             onChange={handleChange('patientName')}
             id='formatted-text-mask-input1'
           />
@@ -163,32 +163,34 @@ export default function HospitalForm (props) {
           />
         </FormControl>
       </Grid>
+      <Grid container spacing={1}>
+        <FormControl className={classes.formControl}>
+          <Input
+            placeholder='나안시력(L)'
+            onChange={handleChange('nakedlefteye')}
+            id='formatted-text-mask-input2'
+          />
+        </FormControl>
+        <FormControl className={classes.formControl}>
+          <Input
+            placeholder='나안시력(R)'
+            value={values.textmask}
+            onChange={handleChange('nakedrighteye')}
+            id='formatted-text-mask-input2'
+          />
+        </FormControl>
+      </Grid>
       <FormControl className={classes.formControl}>
         <Input
-          placeholder='처방의약품의 명칭'
-          onChange={handleChange('medicineName')}
+          placeholder='교정시력(L)'
+          onChange={handleChange('lefteye')}
           id='formatted-text-mask-input2'
         />
       </FormControl>
       <FormControl className={classes.formControl}>
         <Input
-          placeholder='1회 투약량'
-          value={values.textmask}
-          onChange={handleChange('amount')}
-          id='formatted-text-mask-input2'
-        />
-      </FormControl>
-      <FormControl className={classes.formControl}>
-        <Input
-          placeholder='1일 투여횟수'
-          onChange={handleChange('count')}
-          id='formatted-text-mask-input2'
-        />
-      </FormControl>
-      <FormControl className={classes.formControl}>
-        <Input
-          placeholder='총 투약일수'
-          onChange={handleChange('totalDay')}
+          placeholder='교정시력(R)'
+          onChange={handleChange('righteye')}
           id='formatted-text-mask-input2'
         />
       </FormControl>

@@ -6,5 +6,5 @@ export const getPatientLog = ({ uemail }) =>
 export const getHospitalLog = ({ hname }) =>
   axios.get(`/api/log/hospital?hname=${hname}`)
 
-export const getReservations = ({ sname }) =>
+export const getStoreLog = ({ sname }) =>
   axios.get(`/api/log/store?sname=${sname}`)

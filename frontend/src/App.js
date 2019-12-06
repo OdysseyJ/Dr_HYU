@@ -35,7 +35,7 @@ class App extends Component {
         <Route path="/auth" component={Auth} />
         <Route path="/search/hospital" component={HospitalSearch} />
         <Route path="/search/store" component={StoreSearch} />
-        <Route path="/hospital/prescription" component={Prescription} />
+        <Route path="/prescription" component={Prescription} />
       </div>
     );
   }

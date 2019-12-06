@@ -28,22 +28,23 @@ class PrescriptionLog extends Component {
 
   getLogs = async () => {
     const { name } = this.props.loggedInfo.toJS();
-    const logs = await logAPI.getHospitalLog({
-      hname: name
+    const logs = await logAPI.getStoreLog({
+      sname: name
     });
+    console.log(logs);
     const prescriptions = logs.data.filter(p => {
       if (p.logtype === "prescription") {
         return p;
       }
     });
-
+    console.log(prescriptions);
     const patients = await Promise.all(
       prescriptions.map(p => {
         const email = p.uemail;
         return userAPI.getUserByEmail({ email: email });
       })
     );
-
+    console.log(patients);
     const lists = prescriptions.map(p => {
       let email = p.uemail;
       const user = patients.find(p => {
@@ -53,11 +54,11 @@ class PrescriptionLog extends Component {
       });
       return { userinfo: user.data, prescription: p };
     });
+    console.log(lists);
     this.setState({ lists: lists });
   };
 
   handleEyeButton = (data, e) => {
-    console.log(data);
     const { id } = data.p.prescription;
     this.setState({ isPopupShow: true, selectedId: id });
   };
@@ -77,6 +78,7 @@ class PrescriptionLog extends Component {
   }
 
   render() {
+    console.log(this.state.lists);
     return (
       <div>
         <Typography style={{ paddingLeft: 30, paddingTop: 50 }} variant="h5">
@@ -145,54 +147,36 @@ class PrescriptionLog extends Component {
             <DialogTitle id="alert-dialog-title">처방전</DialogTitle>
             {this.state.lists &&
               this.state.lists.map(p => {
-                console.log(p);
                 if (p.prescription.id === this.state.selectedId) {
-                  const {
-                    name,
-                    patientName,
-                    date,
-                    number,
-                    medicineName,
-                    amount,
-                    count,
-                    totalDay
-                  } = JSON.parse(p.prescription.prescription);
-                  return (
-                    <div
-                      key={p.prescription.id}
-                      style={{
-                        paddingLeft: 10,
-                        paddingTop: 10,
-                        paddingRight: 10,
-                        paddingBottom: 10
-                      }}
-                    >
-                      <div>
-                        처방한곳 : {name}
+                  console.log(p.prescription.prescriptiontype);
+                  console.log(p.prescription.prescription);
+                  if (p.prescription.prescriptiontype === "drugstore") {
+                    const { storename, storedate, storedetail } = JSON.parse(
+                      p.prescription.prescription
+                    );
+                    console.log(storename, storedate, storedetail);
+                    return (
+                      <div
+                        key={p.prescription.id}
+                        style={{
+                          paddingLeft: 10,
+                          paddingTop: 10,
+                          paddingRight: 10,
+                          paddingBottom: 10
+                        }}
+                      >
+                        <div>
+                          처방한곳 : {storename}
+                        </div>
+                        <div>
+                          날짜 : {storedate}
+                        </div>
+                        <div>
+                          처방의수정, 변경, 및 대체 : {storedetail}
+                        </div>
                       </div>
-                      <div>
-                        환자이메일 : {patientName}
-                      </div>
-                      <div>
-                        날짜 : {date}
-                      </div>
-                      <div>
-                        호 : {number}
-                      </div>
-                      <div>
-                        처방받은약 : {medicineName}
-                      </div>
-                      <div>
-                        1회투약량 : {amount}정
-                      </div>
-                      <div>
-                        1일투여횟수 : {count}회
-                      </div>
-                      <div>
-                        총 투여일 : {totalDay}일
-                      </div>
-                    </div>
-                  );
+                    );
+                  }
                 }
                 return <div key={p.prescription.id} />;
               })}

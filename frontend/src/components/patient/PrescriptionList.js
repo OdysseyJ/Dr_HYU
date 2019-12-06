@@ -28,7 +28,6 @@ class PrescriptionList extends Component {
     const prescriptions = await prescriptionAPI.getPrescriptions({
       uemail: email
     });
-    console.log(prescriptions);
     this.setState({ prescriptions: prescriptions.data });
   };
 
@@ -46,6 +45,7 @@ class PrescriptionList extends Component {
   }
 
   render() {
+    console.log(this.state.prescriptions);
     return (
       <div>
         <Typography style={{ paddingLeft: 30, paddingTop: 50 }} variant="h5">
@@ -61,12 +61,7 @@ class PrescriptionList extends Component {
             <List>
               {this.state.prescriptions &&
                 this.state.prescriptions.map(p => {
-                  let name;
-                  if (p.sname === null) {
-                    name = p.hname;
-                  } else if (p.hname === null) {
-                    name = p.sname;
-                  }
+                  let name = p.hname;
                   return (
                     <ListItem key={p.id}>
                       <ListItemText primary={name} />
@@ -93,21 +88,105 @@ class PrescriptionList extends Component {
             {this.state.prescriptions &&
               this.state.prescriptions.map(p => {
                 if (p.id === this.state.selectedId) {
-                  return (
-                    <div
-                      key={p}
-                      style={{
-                        paddingLeft: 10,
-                        paddingTop: 10,
-                        paddingRight: 10,
-                        paddingBottom: 10
-                      }}
-                    >
-                      ${p.prescription}
-                    </div>
-                  );
+                  const {
+                    name,
+                    date,
+                    number,
+
+                    medicineName,
+                    amount,
+                    count,
+                    totalDay,
+
+                    nakedlefteye,
+                    nakedrighteye,
+                    lefteye,
+                    righteye,
+
+                    storename,
+                    storedate,
+                    storedetail
+                  } = JSON.parse(p.prescription);
+                  if (p.prescriptiontype === "medicine") {
+                    return (
+                      <div
+                        key={p.id}
+                        style={{
+                          paddingLeft: 10,
+                          paddingTop: 10,
+                          paddingRight: 10,
+                          paddingBottom: 10
+                        }}
+                      >
+                        <div>
+                          병원이름 : {name}
+                        </div>
+                        <div>
+                          병원처방날짜 : {date}
+                        </div>
+                        <div>
+                          호 : {number}
+                        </div>
+                        <div>
+                          약이름 : {medicineName}
+                        </div>
+                        <div>
+                          1회복용량 : {amount}
+                        </div>
+                        <div>
+                          1일복용량 : {count}
+                        </div>
+                        <div>
+                          총복용일 : {totalDay}
+                        </div>
+                        <div>
+                          약국이름 : {storename}
+                        </div>
+                        <div>
+                          약국처방날짜 : {storedate}
+                        </div>
+                        <div>
+                          상세내용 : {storedetail}
+                        </div>
+                      </div>
+                    );
+                  } else if (p.prescriptiontype === "glasses") {
+                    return (
+                      <div
+                        key={p.id}
+                        style={{
+                          paddingLeft: 10,
+                          paddingTop: 10,
+                          paddingRight: 10,
+                          paddingBottom: 10
+                        }}
+                      >
+                        <div>
+                          병원이름 : {name}
+                        </div>
+                        <div>
+                          병원처방날짜 : {date}
+                        </div>
+                        <div>
+                          호 : {number}
+                        </div>
+                        <div>
+                          나안시력(L) : {nakedlefteye}
+                        </div>
+                        <div>
+                          나안시력(R) : {nakedrighteye}
+                        </div>
+                        <div>
+                          교정시력(L) : {lefteye}
+                        </div>
+                        <div>
+                          교정시력(R) : {righteye}
+                        </div>
+                      </div>
+                    );
+                  }
                 }
-                return <div key={p} />;
+                return <div key={p.id} />;
               })}
 
             <DialogActions>
