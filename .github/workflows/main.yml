@@ -15,4 +15,4 @@ jobs:                                 # Job 설정
       - name: build frontend          
 	working-directory: ./frontend
         run: | 
-	  yarn install
+          npm install
