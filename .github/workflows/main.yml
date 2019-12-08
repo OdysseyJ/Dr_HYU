@@ -1,18 +1,17 @@
-name: my workflow                     # Workflow 이름
-on: 
-  push:
-    branches:
-      - master                            # Event 감지
+name: frontend
 
-jobs:                                 # Job 설정
-  build:                              # Job ID
-    name: hello github action         # Job 이름
-    runs-on: ubuntu-18.04             # Job 가상환경 인스턴스
-    steps:                            # Steps
-      - name: checkout source code    # Step 이름
-        uses: actions/checkout@master
+on: [push]
 
-      - name: build frontend          
-	working-directory: ./frontend
-        run: | 
-          npm install
+jobs:
+      
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Install dependencies
+      working-directory: ./frontend
+      run: | 
+        npm install
+        
