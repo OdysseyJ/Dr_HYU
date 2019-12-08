@@ -16,6 +16,9 @@ jobs:                                 # Job 설정
 
       - name: move frontend              # Step 이름
         run: cd frontend
+
+      - name: check directory
+	run: ls
            
       - name: install dependencies
         run: yarn install
