@@ -12,6 +12,9 @@ class SelectOptions extends Component {
     GlassStore: false,
     ALL: false,
     all: false,
+    hospital: false,
+    clinic: false,
+    eye: false,
     search: ""
   };
 
@@ -29,7 +32,6 @@ class SelectOptions extends Component {
 
   handleSearchButton = async e => {
     //e.preventDefault(); 페이지 리로딩 방지하고시프면
-    console.log(this.state);
     this.props.onCreate(this.state);
     this.fv.value = "";
     await this.setState({
@@ -37,6 +39,9 @@ class SelectOptions extends Component {
       GlassStore: false,
       ALL: false,
       all: false,
+      hospital: false,
+      clinic: false,
+      eye: false,
       search: ""
     });
   };
@@ -70,6 +75,39 @@ class SelectOptions extends Component {
                 />
               }
               label="종합병원"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={this.state.hospital}
+                  onChange={this.handleChange("hospital")}
+                  value="hospital"
+                  color="primary"
+                />
+              }
+              label="병원"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={this.state.clinic}
+                  onChange={this.handleChange("clinic")}
+                  value="clinic"
+                  color="primary"
+                />
+              }
+              label="의원"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={this.state.eye}
+                  onChange={this.handleChange("eye")}
+                  value="eye"
+                  color="primary"
+                />
+              }
+              label="안과"
             />
           </FormGroup>}
         {type === "store" &&

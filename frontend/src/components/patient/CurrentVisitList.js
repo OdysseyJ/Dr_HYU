@@ -28,6 +28,7 @@ class CurrentVisitList extends Component {
   }
 
   render() {
+    console.log(this.state.logs);
     return (
       <div>
         <Typography style={{ paddingLeft: 30, paddingTop: 50 }} variant="h5">
@@ -41,9 +42,9 @@ class CurrentVisitList extends Component {
         >
           <div>
             <List>
-              {this.state.logs &&
+              {this.state.logs.length > 0 &&
                 this.state.logs.map(p => {
-                  if (p.type === "reservation") {
+                  if (p.logtype === "reservation") {
                     let name;
                     if (p.sname === null) {
                       name = p.hname;

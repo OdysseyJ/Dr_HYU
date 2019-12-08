@@ -31,20 +31,17 @@ class PrescriptionLog extends Component {
     const logs = await logAPI.getStoreLog({
       sname: name
     });
-    console.log(logs);
     const prescriptions = logs.data.filter(p => {
       if (p.logtype === "prescription") {
         return p;
       }
     });
-    console.log(prescriptions);
     const patients = await Promise.all(
       prescriptions.map(p => {
         const email = p.uemail;
         return userAPI.getUserByEmail({ email: email });
       })
     );
-    console.log(patients);
     const lists = prescriptions.map(p => {
       let email = p.uemail;
       const user = patients.find(p => {
@@ -54,7 +51,6 @@ class PrescriptionLog extends Component {
       });
       return { userinfo: user.data, prescription: p };
     });
-    console.log(lists);
     this.setState({ lists: lists });
   };
 
@@ -78,7 +74,6 @@ class PrescriptionLog extends Component {
   }
 
   render() {
-    console.log(this.state.lists);
     return (
       <div>
         <Typography style={{ paddingLeft: 30, paddingTop: 50 }} variant="h5">
@@ -148,13 +143,13 @@ class PrescriptionLog extends Component {
             {this.state.lists &&
               this.state.lists.map(p => {
                 if (p.prescription.id === this.state.selectedId) {
-                  console.log(p.prescription.prescriptiontype);
-                  console.log(p.prescription.prescription);
-                  if (p.prescription.prescriptiontype === "drugstore") {
+                  if (
+                    p.prescription.prescriptiontype === "drugstore" ||
+                    p.prescription.prescriptiontype === "glassstore"
+                  ) {
                     const { storename, storedate, storedetail } = JSON.parse(
                       p.prescription.prescription
                     );
-                    console.log(storename, storedate, storedetail);
                     return (
                       <div
                         key={p.prescription.id}

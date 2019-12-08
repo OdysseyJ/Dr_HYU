@@ -30,6 +30,8 @@ import {
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
+import { ClipLoader } from "react-spinners";
+
 const { InfoBox } = require("react-google-maps/lib/components/addons/InfoBox");
 
 // for currentTime
@@ -42,8 +44,6 @@ const GoogleMapContainer = withScriptjs(
     // 현재시간 받아오기 (hour)
     const currentHour = Number(String(moment()._d).split(" ")[4].split(":")[0]);
 
-    const defaultlat = parseFloat(process.env.REACT_APP_HYU_LAT);
-    const defaultlng = parseFloat(process.env.REACT_APP_HYU_LNG);
     const {
       handleMapClick,
       handleMarkerClick,
@@ -53,16 +53,29 @@ const GoogleMapContainer = withScriptjs(
       handleFavoriteButton,
       handleFavoriteDeleteButton,
       isExistInFavorite,
-      type
+      type,
+      defaultLng,
+      defaultLat
     } = props;
     let { isListSet } = props;
-    const { ALL, all, search, Pharmacy, GlassStore } = props.options;
-
+    const {
+      ALL,
+      all,
+      hospital,
+      clinic,
+      eye,
+      search,
+      Pharmacy,
+      GlassStore
+    } = props.options;
+    let availableList = null;
+    let unavailableList = null;
     if (isListSet) {
       // option에 따라 보여줄 마커 결정하기.
       const infoList = props.list.filter(p => {
         if (type === "hospital") {
-          if (!ALL && !all && search === "") return p;
+          if (!ALL && !all && !hospital && !clinic && !eye && search === "")
+            return p;
           if (search === "") {
             if (ALL) {
               if (p.department === "상급종합") return p;
@@ -70,7 +83,16 @@ const GoogleMapContainer = withScriptjs(
             if (all) {
               if (p.department === "종합병원") return p;
             }
-          } else if (search.value === p.name) return p;
+            if (hospital) {
+              if (p.department === "병원") return p;
+            }
+            if (clinic) {
+              if (p.department === "의원") return p;
+            }
+            if (eye) {
+              if (p.department === "안과") return p;
+            }
+          } else if (p.name.match(search.value)) return p;
         } else if (type === "store") {
           if (!Pharmacy && !GlassStore && search === "") return p;
           if (search === "") {
@@ -80,13 +102,12 @@ const GoogleMapContainer = withScriptjs(
             if (GlassStore) {
               if (p.department === "안경점") return p;
             }
-          } else if (search.value === p.name) return p;
+          } else if (p.name.match(search.value)) return p;
         }
         return null;
       });
-
       // 현재 예약가능한 리스트
-      const availableList = infoList.filter(p => {
+      availableList = infoList.filter(p => {
         const startHour = Number(p.openTime.split("~")[0].split(":")[0]);
         const closeHour = Number(p.openTime.split("~")[1].split(":")[0]);
         if (currentHour >= startHour && currentHour < closeHour) {
@@ -94,9 +115,8 @@ const GoogleMapContainer = withScriptjs(
         }
         return null;
       });
-
       // 현재 예약불가능한 리스트
-      const unavailableList = infoList.filter(p => {
+      unavailableList = infoList.filter(p => {
         const startHour = Number(p.openTime.split("~")[0].split(":")[0]);
         const closeHour = Number(p.openTime.split("~")[1].split(":")[0]);
         if (currentHour < startHour || currentHour >= closeHour) {
@@ -105,10 +125,11 @@ const GoogleMapContainer = withScriptjs(
         return null;
       });
       // 맵과 마커 출력.
+
       return (
         <GoogleMap
           defaultZoom={13}
-          defaultCenter={{ lat: defaultlat, lng: defaultlng }}
+          defaultCenter={{ lat: defaultLat, lng: defaultLng }}
           onClick={handleMapClick}
         >
           {availableList !== null &&
@@ -408,7 +429,9 @@ class GoogleMapComponent extends React.PureComponent {
     selectedMonth: "",
     selectedDay: "",
     selectedTime: "",
-    options: {}
+    options: {},
+    defaultLat: "",
+    defaultLng: ""
   };
 
   time = ["09~10", "10~11", "11~12", "13~14", "14~15", "15~16", "16~17"];
@@ -438,21 +461,34 @@ class GoogleMapComponent extends React.PureComponent {
 
   getList = async () => {
     const { type, options } = this.props;
-    await this.setState({ type: type, options: options });
     const { lat, lng } = this.props.loggedInfo.toJS();
-    if (this.state.type === "hospital") {
+    if (type === "hospital") {
       const hospitalList = await hospitalAPI.getNearHospitals({
         lat: lat,
         lng: lng
       });
-      await this.setState({ isListSet: true, list: hospitalList.data });
+      await this.setState({
+        type: type,
+        options: options,
+        isListSet: true,
+        list: hospitalList.data,
+        defaultLat: lat,
+        defaultLng: lng
+      });
     }
-    if (this.state.type === "store") {
+    if (type === "store") {
       const storeList = await storeAPI.getNearStores({
         lat: lat,
         lng: lng
       });
-      await this.setState({ isListSet: true, list: storeList.data });
+      await this.setState({
+        type: type,
+        options: options,
+        isListSet: true,
+        list: storeList.data,
+        defaultLat: lat,
+        defaultLng: lng
+      });
     }
   };
 
@@ -688,26 +724,32 @@ class GoogleMapComponent extends React.PureComponent {
   render() {
     return (
       <div>
-        <GoogleMapContainer
-          isMarkerShown={this.state.isMarkerShown}
-          googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${process
-            .env.REACT_APP_MAP_API_KEY}`}
-          loadingElement={<div style={{ height: `100%` }} />}
-          containerElement={<div style={{ height: `400px` }} />}
-          mapElement={<div style={{ height: `100%` }} />}
-          list={this.state.list}
-          handleMapClick={this.handleMapClick}
-          handleMarkerClick={this.handleMarkerClick}
-          showingInfoWindow={this.state.showingInfoWindow}
-          activeMarkerInfo={this.state.activeMarkerInfo}
-          handleReservationButton={this.handleReservationButton}
-          handleFavoriteButton={this.handleFavoriteButton}
-          handleFavoriteDeleteButton={this.handleFavoriteDeleteButton}
-          isListSet={this.state.isListSet}
-          isExistInFavorite={this.state.isExistInFavorite}
-          options={this.state.options}
-          type={this.state.type}
-        />
+        {this.state.isListSet
+          ? <GoogleMapContainer
+              isMarkerShown={this.state.isMarkerShown}
+              googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${process
+                .env.REACT_APP_MAP_API_KEY}`}
+              loadingElement={<div style={{ height: `100%` }} />}
+              containerElement={<div style={{ height: `400px` }} />}
+              mapElement={<div style={{ height: `100%` }} />}
+              list={this.state.list}
+              handleMapClick={this.handleMapClick}
+              handleMarkerClick={this.handleMarkerClick}
+              showingInfoWindow={this.state.showingInfoWindow}
+              activeMarkerInfo={this.state.activeMarkerInfo}
+              handleReservationButton={this.handleReservationButton}
+              handleFavoriteButton={this.handleFavoriteButton}
+              handleFavoriteDeleteButton={this.handleFavoriteDeleteButton}
+              isListSet={this.state.isListSet}
+              isExistInFavorite={this.state.isExistInFavorite}
+              options={this.state.options}
+              type={this.state.type}
+              defaultLat={this.state.defaultLat}
+              defaultLng={this.state.defaultLng}
+            />
+          : <div>
+              <ClipLoader color={"#123abc"} />
+            </div>}
         <Dialog
           open={this.state.showPopup}
           aria-labelledby="alert-dialog-title"

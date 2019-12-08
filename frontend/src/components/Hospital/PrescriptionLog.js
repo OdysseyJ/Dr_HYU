@@ -155,44 +155,88 @@ class PrescriptionLog extends Component {
                     medicineName,
                     amount,
                     count,
-                    totalDay
+                    totalDay,
+                    nakedlefteye,
+                    nakedrighteye,
+                    lefteye,
+                    righteye
                   } = JSON.parse(p.prescription.prescription);
-                  return (
-                    <div
-                      key={p.prescription.id}
-                      style={{
-                        paddingLeft: 10,
-                        paddingTop: 10,
-                        paddingRight: 10,
-                        paddingBottom: 10
-                      }}
-                    >
-                      <div>
-                        처방한곳 : {name}
+
+                  if (p.prescription.prescriptiontype === "glasses") {
+                    return (
+                      <div
+                        key={p.prescription.id}
+                        style={{
+                          paddingLeft: 10,
+                          paddingTop: 10,
+                          paddingRight: 10,
+                          paddingBottom: 10
+                        }}
+                      >
+                        <div>
+                          처방한곳 : {name}
+                        </div>
+                        <div>
+                          환자이메일 : {patientName}
+                        </div>
+                        <div>
+                          날짜 : {date}
+                        </div>
+                        <div>
+                          호 : {number}
+                        </div>
+                        <div>
+                          나안시력(L) : {nakedlefteye}
+                        </div>
+                        <div>
+                          나안시력(R) : {nakedrighteye}
+                        </div>
+                        <div>
+                          교정시력(L) : {lefteye}
+                        </div>
+                        <div>
+                          교정시력(R) : {righteye}
+                        </div>
                       </div>
-                      <div>
-                        환자이메일 : {patientName}
+                    );
+                  } else if (p.prescription.prescriptiontype === "medicine") {
+                    return (
+                      <div
+                        key={p.prescription.id}
+                        style={{
+                          paddingLeft: 10,
+                          paddingTop: 10,
+                          paddingRight: 10,
+                          paddingBottom: 10
+                        }}
+                      >
+                        <div>
+                          처방한곳 : {name}
+                        </div>
+                        <div>
+                          환자이메일 : {patientName}
+                        </div>
+                        <div>
+                          날짜 : {date}
+                        </div>
+                        <div>
+                          호 : {number}
+                        </div>
+                        <div>
+                          처방받은약 : {medicineName}
+                        </div>
+                        <div>
+                          1회투약량 : {amount}정
+                        </div>
+                        <div>
+                          1일투여횟수 : {count}회
+                        </div>
+                        <div>
+                          총 투여일 : {totalDay}일
+                        </div>
                       </div>
-                      <div>
-                        날짜 : {date}
-                      </div>
-                      <div>
-                        호 : {number}
-                      </div>
-                      <div>
-                        처방받은약 : {medicineName}
-                      </div>
-                      <div>
-                        1회투약량 : {amount}정
-                      </div>
-                      <div>
-                        1일투여횟수 : {count}회
-                      </div>
-                      <div>
-                        총 투여일 : {totalDay}일
-                      </div>
-                    </div>
-                  );
+                    );
+                  }
                 }
                 return <div key={p.prescription.id} />;
               })}

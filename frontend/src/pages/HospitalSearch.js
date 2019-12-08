@@ -8,6 +8,9 @@ class HospitalSearch extends Component {
       GlassStore: false,
       ALL: false,
       all: false,
+      hospital: false,
+      clinic: false,
+      eye: false,
       search: ""
     }
   };
