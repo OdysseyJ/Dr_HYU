@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/Dr_HYU/static/css/main.28b8c292.chunk.css",
+    "main.js": "/Dr_HYU/static/js/main.9fcbda7e.chunk.js",
+    "main.js.map": "/Dr_HYU/static/js/main.9fcbda7e.chunk.js.map",
+    "runtime-main.js": "/Dr_HYU/static/js/runtime-main.a34d0ac7.js",
+    "runtime-main.js.map": "/Dr_HYU/static/js/runtime-main.a34d0ac7.js.map",
+    "static/js/2.a7689d78.chunk.js": "/Dr_HYU/static/js/2.a7689d78.chunk.js",
+    "static/js/2.a7689d78.chunk.js.map": "/Dr_HYU/static/js/2.a7689d78.chunk.js.map",
+    "index.html": "/Dr_HYU/index.html",
+    "precache-manifest.ff0e661ae87e0d8b82d9cd7c905d16bb.js": "/Dr_HYU/precache-manifest.ff0e661ae87e0d8b82d9cd7c905d16bb.js",
+    "service-worker.js": "/Dr_HYU/service-worker.js",
+    "static/css/main.28b8c292.chunk.css.map": "/Dr_HYU/static/css/main.28b8c292.chunk.css.map"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.a34d0ac7.js",
+    "static/js/2.a7689d78.chunk.js",
+    "static/css/main.28b8c292.chunk.css",
+    "static/js/main.9fcbda7e.chunk.js"
+  ]
+}
