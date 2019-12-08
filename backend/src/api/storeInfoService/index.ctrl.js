@@ -177,19 +177,25 @@ ctrl.getStores = async ctx => {
     }
 
     const { items: { item } } = JSON.parse(response).response.body
-    item.map(async p => {
-      await db.Store.create({
-        name: p.yadmNm,
-        numOfDoctors: p.sdrCnt,
-        department: p.clCdNm,
-        prescription: '확인중',
-        lat: p.YPos,
-        lng: p.XPos,
-        address: p.addr,
-        openTime: '00:00~24:00',
-        openDay: '월,화,수,목,금'
-      })
-    })
+
+    // Promise all인데 실패는 무시하는구문.
+    await Promise.all(
+      item
+        .map(async p => {
+          await db.Store.create({
+            name: p.yadmNm,
+            numOfDoctors: p.sdrCnt,
+            department: p.clCdNm,
+            prescription: '확인중',
+            lat: p.YPos,
+            lng: p.XPos,
+            address: p.addr,
+            openTime: '00:00~24:00',
+            openDay: '월,화,수,목,금'
+          })
+        })
+        .map(p => p.catch(e => e))
+    )
   }
 
   const list = await db.Store.getAllStores()

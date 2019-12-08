@@ -14,7 +14,7 @@ ctrl.getDefaultHospitals = async ctx => {
   const radius = 5000
   var pageNum = 1
   const numOfRows = 10
-  for (var count = 0; count < 1; count++) {
+  for (var count = 0; count < 5; count++) {
     const options = {
       uri:
         'http://apis.data.go.kr/B551182/hospInfoService/getHospBasisList' +
@@ -22,7 +22,7 @@ ctrl.getDefaultHospitals = async ctx => {
         key +
         '&pageNo=' +
         pageNum +
-        '&numOfRows' +
+        '&numOfRows=' +
         numOfRows +
         '&xPos=' +
         xpos +
@@ -41,6 +41,43 @@ ctrl.getDefaultHospitals = async ctx => {
         name: p.yadmNm,
         numOfDoctors: p.sdrCnt,
         department: p.clCdNm,
+        lat: p.YPos,
+        lng: p.XPos,
+        address: p.addr,
+        openTime: '09:00~18:00',
+        openDay: '월,화,수,목,금'
+      })
+    })
+  }
+  for (var count = 0; count < 5; count++) {
+    const options = {
+      uri:
+        'http://apis.data.go.kr/B551182/hospInfoService/getHospBasisList' +
+        '?ServiceKey=' +
+        key +
+        '&pageNo=' +
+        pageNum +
+        '&numOfRows=' +
+        numOfRows +
+        '&&dgsbjtCd=' +
+        12 +
+        '&xPos=' +
+        xpos +
+        '&yPos=' +
+        ypos +
+        '&radius=' +
+        radius +
+        '&_type=json'
+    }
+
+    pageNum++
+    const response = await request(options)
+    const hospital_arr = JSON.parse(response).response.body.items.item
+    hospital_arr.map(async p => {
+      await db.Hospital.create({
+        name: p.yadmNm,
+        numOfDoctors: p.sdrCnt,
+        department: '안과',
         lat: p.YPos,
         lng: p.XPos,
         address: p.addr,
@@ -81,9 +118,9 @@ ctrl.getHospitals = async ctx => {
     { latitude: lat, longitude: lng },
     { latitude: HYU_lat, longitude: HYU_lng }
   )
-
   if (distance > MAX_DISTANCE) {
     // 해당 위치를 기반으로 API 요청하기. await사용.
+
     var pageNum = 1
     const numOfRows = 10
     const options = {
@@ -108,26 +145,32 @@ ctrl.getHospitals = async ctx => {
 
     if (totalCount === 0) {
       ctx.status = 200
-      ctx.body = {}
+      ctx.body = []
       return
     }
-
     const { items: { item } } = JSON.parse(response).response.body
-    item.map(async p => {
-      await db.Hospital.create({
-        name: p.yadmNm,
-        numOfDoctors: p.sdrCnt,
-        department: p.clCdNm,
-        lat: p.YPos,
-        lng: p.XPos,
-        address: p.addr,
-        openTime: '09:00~18:00',
-        openDay: '월,화,수,목,금'
-      })
-    })
+
+    // Promise all인데 실패는 무시하는구문.
+    await Promise.all(
+      item
+        .map(async p => {
+          await db.Hospital.create({
+            name: p.yadmNm,
+            numOfDoctors: p.sdrCnt,
+            department: p.clCdNm,
+            lat: p.YPos,
+            lng: p.XPos,
+            address: p.addr,
+            openTime: '09:00~18:00',
+            openDay: '월,화,수,목,금'
+          })
+        })
+        .map(p => p.catch(e => e))
+    )
   }
 
   const list = await db.Hospital.getAllHospitals()
+
   const validlist = list
     .filter(p => {
       const distance = computeDistance(
@@ -139,10 +182,9 @@ ctrl.getHospitals = async ctx => {
     .map(p => {
       return p.dataValues
     })
-
   if (validlist === null) {
     ctx.status = 200
-    ctx.body = {}
+    ctx.body = []
   } else {
     ctx.status = 200
     ctx.body = validlist
