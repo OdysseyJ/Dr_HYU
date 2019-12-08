@@ -15,7 +15,7 @@ jobs:                                 # Job 설정
         run: ls
 
       - name: build frontend              # Step 이름
-        run: |
-	  cd frontend
+	working-directory: ./frontend
+        run: | 
           yarn install
           yarn build
