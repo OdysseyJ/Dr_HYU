@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route } from "react-router-dom";
-import { Auth, Home, HospitalSearch, StoreSearch, Prescription } from "pages";
+import { Auth, Home, HospitalSearch, StoreSearch, Prescription } from "./pages";
 import HeaderContainer from "./containers/Base/HeaderContainer";
 
 import storage from "./lib/storage";
