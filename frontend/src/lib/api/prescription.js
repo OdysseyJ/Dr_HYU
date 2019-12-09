@@ -7,7 +7,7 @@ export const makePrescription = ({
   hname,
   sname
 }) =>
-  axios.post('/api/prescription/make', {
+  axios.post('http://54.180.31.234:4000/api/prescription/make', {
     prescriptiontype,
     prescription,
     uemail,
@@ -16,7 +16,7 @@ export const makePrescription = ({
   })
 
 export const getPrescriptions = ({ uemail }) =>
-  axios.get(`/api/prescription?uemail=${uemail}`)
+  axios.get(`http://54.180.31.234:4000/api/prescription?uemail=${uemail}`)
 
 export const updatePrescription = ({
   prescriptiontype,
@@ -25,7 +25,7 @@ export const updatePrescription = ({
   uemail,
   sname
 }) =>
-  axios.post('/api/prescription/update', {
+  axios.post('http://54.180.31.234:4000/api/prescription/update', {
     prescriptiontype,
     prescriptionId,
     prescription,

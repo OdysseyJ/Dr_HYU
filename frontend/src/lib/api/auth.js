@@ -1,14 +1,14 @@
 import axios from 'axios'
 
 export const checkEmailExists = email =>
-  axios.get('/api/login/exists/email/' + email)
+  axios.get('http://54.180.31.234:4000/api/login/exists/email/' + email)
 export const checkHospitalExists = hname =>
-  axios.get('/api/login/exists/hname/' + hname)
+  axios.get('http://54.180.31.234:4000/api/login/exists/hname/' + hname)
 export const checkStoreExists = sname =>
-  axios.get('/api/login/exists/sname/' + sname)
+  axios.get('http://54.180.31.234:4000/api/login/exists/sname/' + sname)
 
 export const localLogin = ({ email, password }) =>
-  axios.post('/api/login/local', { email, password })
+  axios.post('http://54.180.31.234:4000/api/login/local', { email, password })
 
 export const localRegister = ({
   usertype,
@@ -19,7 +19,7 @@ export const localRegister = ({
   lat,
   lng
 }) => {
-  return axios.post('/api/login/register/local', {
+  return axios.post('http://54.180.31.234:4000/api/login/register/local', {
     usertype,
     email,
     name,
