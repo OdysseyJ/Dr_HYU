@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Patient, Hospital, Store } from 'pages'
+import { Patient, Hospital, Store } from './pages'
 
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'

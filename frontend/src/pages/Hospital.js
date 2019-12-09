@@ -3,7 +3,7 @@ import {
   PatientReservationList,
   PrescriptionButton,
   PrescriptionLog
-} from '../components/Hospital'
+} from '../components/Hospital/index'
 
 class Hospital extends Component {
   render () {

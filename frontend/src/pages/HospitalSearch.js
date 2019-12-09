@@ -1,5 +1,9 @@
 import React, { Component } from "react";
-import { GoogleMapComponent, Title, SelectOptions } from "../containers/Map";
+import {
+  GoogleMapComponent,
+  Title,
+  SelectOptions
+} from "../containers/Map/index";
 
 class HospitalSearch extends Component {
   state = {
