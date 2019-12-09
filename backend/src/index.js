@@ -1,4 +1,5 @@
 const Koa = require('koa')
+const cors = require('@koa/cors')
 const Router = require('koa-router')
 const dotenv = require('dotenv')
 const { jwtMiddleware } = require('./lib/token')
@@ -18,9 +19,11 @@ const api = require('./api')
 
 router.use('/api', api.routes()) // api 라우트를 /api 경로 하위 라우트로 설정
 
+// cors
+app.use(cors())
+
 // request를 쉽게쓰기 위한 작업.
 app.use(bodyParser())
-
 
 // for jwt
 app.use(jwtMiddleware)
