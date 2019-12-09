@@ -11,10 +11,9 @@ jobs:
       uses: actions/checkout@master
 
     - name: Cache node modules
-      working-directory: ./frontend
       uses: actions/cache@v1
       with:
-        path: node_modules
+        path: ./frontend/node_modules
         key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.OS }}-build-
