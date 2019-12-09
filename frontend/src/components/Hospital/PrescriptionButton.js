@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyledLink } from 'components/Util'
+import { StyledLink } from '../../components/Util'
 
 const PrescriptionButton = () =>
   <div>

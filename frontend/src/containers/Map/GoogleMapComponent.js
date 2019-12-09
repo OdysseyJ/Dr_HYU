@@ -1,14 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
-import * as hospitalAPI from "lib/api/hospital";
-import * as storeAPI from "lib/api/store";
-import * as reservationAPI from "lib/api/reservation";
-import * as favoriteAPI from "lib/api/favorite";
+import * as hospitalAPI from "../../lib/api/hospital";
+import * as storeAPI from "../../lib/api/store";
+import * as reservationAPI from "../../lib/api/reservation";
+import * as favoriteAPI from "../../lib/api/favorite";
 
 //for redux.
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import * as userActions from "redux/modules/user";
+import * as userActions from "../../redux/modules/user";
 
 // for google map
 import {
@@ -19,7 +19,7 @@ import {
 } from "react-google-maps";
 
 // for css components
-import { Button } from "components/Util";
+import { Button } from "../../components/Util";
 import {
   Dialog,
   DialogTitle,

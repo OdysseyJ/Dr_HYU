@@ -3,13 +3,13 @@ import {
   DrugstoreForm,
   GlassstoreForm,
   HospitalForm
-} from "components/Prescription";
+} from "../components/Prescription";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import * as userActions from "redux/modules/user";
-import * as storeAPI from "lib/api/store";
-import * as hospitalAPI from "lib/api/hospital";
+import * as userActions from "../redux/modules/user";
+import * as storeAPI from "../lib/api/store";
+import * as hospitalAPI from "../lib/api/hospital";
 import { GlassHospitalForm } from "../components/Prescription";
 
 class Prescription extends Component {

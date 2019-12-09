@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import oc from 'open-color'
 import { NavLink } from 'react-router-dom'
-import { shadow } from 'lib/styleUtils'
+import { shadow } from '../../lib/styleUtils'
 
 const StyledNavLink = styled(NavLink)`
     font-weight: 600;

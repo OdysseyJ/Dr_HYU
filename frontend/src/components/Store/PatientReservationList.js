@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import * as reservationAPI from "lib/api/reservation";
+import * as reservationAPI from "../../lib/api/reservation";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
@@ -7,14 +7,14 @@ import ListItemText from "@material-ui/core/ListItemText";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { StyledNavLink } from "components/Util";
+import { StyledNavLink } from "../../components/Util";
 
 //for redux.
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import * as userActions from "redux/modules/user";
+import * as userActions from "../../redux/modules/user";
 
-import { Button } from "components/Util";
+import { Button } from "../../components/Util";
 import { Dialog, DialogTitle, DialogActions } from "@material-ui/core";
 
 class PatientReservationList extends Component {

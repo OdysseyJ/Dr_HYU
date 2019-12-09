@@ -2,7 +2,7 @@ import { createAction, handleActions } from 'redux-actions'
 
 // 새로운 객체로 반환해주는 녀석.
 import { Map } from 'immutable'
-import * as AuthAPI from 'lib/api/auth'
+import * as AuthAPI from '../../lib/api/auth'
 
 // 프로미스 기반 액션들을 관리, payload에 프로미스가 있으면 시작전 완료 실패때
 // 뒤에 PENDING, SUCCESS, FAILURE를 붙인다.

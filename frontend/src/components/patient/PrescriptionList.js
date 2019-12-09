@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import * as prescriptionAPI from "lib/api/prescription";
+import * as prescriptionAPI from "../../lib/api/prescription";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
@@ -11,9 +11,9 @@ import EyeIcon from "@material-ui/icons/Visibility";
 //for redux.
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import * as userActions from "redux/modules/user";
+import * as userActions from "../../redux/modules/user";
 
-import { Button } from "components/Util";
+import { Button } from "../../components/Util";
 import { Dialog, DialogTitle, DialogActions } from "@material-ui/core";
 
 class PrescriptionList extends Component {

@@ -1,9 +1,12 @@
 import React, { Component } from "react";
-import Header, { LoginButton, LogoutButton } from "components/Base/Header";
+import Header, {
+  LoginButton,
+  LogoutButton
+} from "../../components/Base/Header";
 import { connect } from "react-redux";
-import * as userActions from "redux/modules/user";
+import * as userActions from "../../redux/modules/user";
 import { bindActionCreators } from "redux";
-import storage from "lib/storage";
+import storage from "../../lib/storage";
 
 class HeaderContainer extends Component {
   handleLogout = async () => {

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import * as logAPI from "lib/api/log";
-import * as userAPI from "lib/api/user";
+import * as logAPI from "../../lib/api/log";
+import * as userAPI from "../../lib/api/user";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
@@ -13,9 +13,9 @@ import TextField from "@material-ui/core/TextField";
 //for redux.
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import * as userActions from "redux/modules/user";
+import * as userActions from "../../redux/modules/user";
 
-import { Button } from "components/Util";
+import { Button } from "../../components/Util";
 import { Dialog, DialogTitle, DialogActions } from "@material-ui/core";
 
 class PrescriptionLog extends Component {

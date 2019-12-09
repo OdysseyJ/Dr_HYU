@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import * as prescriptionAPI from "lib/api/prescription";
+import * as prescriptionAPI from "../../lib/api/prescription";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
@@ -7,7 +7,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import EyeIcon from "@material-ui/icons/Visibility";
-import { Buttons } from "components/Prescription";
+import { Buttons } from "../../components/Prescription";
 import MaskedInput from "react-text-mask";
 import Input from "@material-ui/core/Input";
 import Grid from "@material-ui/core/Grid";

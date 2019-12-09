@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyledLink, StyledButton } from 'components/Util'
+import { StyledLink, StyledButton } from '../../components/Util'
 
 class Buttons extends Component {
   render () {

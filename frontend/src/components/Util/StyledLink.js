@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import oc from 'open-color'
 import { Link } from 'react-router-dom'
-import { shadow } from 'lib/styleUtils'
+import { shadow } from '../../lib/styleUtils'
 
 const StyledLink = styled(Link)`
     font-weight: 600;

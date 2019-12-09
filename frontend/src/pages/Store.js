@@ -3,12 +3,12 @@ import {
   PatientReservationList,
   PrescriptionLog,
   PrescriptionPossibleButton
-} from "components/Store";
+} from "../components/Store";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import * as userActions from "redux/modules/user";
-import * as storeActions from "lib/api/store";
+import * as userActions from "../redux/modules/user";
+import * as storeActions from "../lib/api/store";
 
 class Store extends Component {
   state = {

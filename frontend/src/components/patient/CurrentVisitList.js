@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import * as logAPI from "lib/api/log";
+import * as logAPI from "../../lib/api/log";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography";
 //for redux.
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import * as userActions from "redux/modules/user";
+import * as userActions from "../../redux/modules/user";
 
 class CurrentVisitList extends Component {
   state = {

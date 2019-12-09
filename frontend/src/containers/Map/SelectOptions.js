@@ -4,7 +4,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import { StyledLink } from "components/Util";
+import { StyledLink } from "../../components/Util";
 
 class SelectOptions extends Component {
   state = {

@@ -3,7 +3,7 @@ import { Patient, Hospital, Store } from 'pages'
 
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as userActions from 'redux/modules/user'
+import * as userActions from '../redux/modules/user'
 
 class Home extends Component {
   render () {

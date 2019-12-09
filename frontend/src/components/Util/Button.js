@@ -2,7 +2,7 @@ import React from 'react'
 
 import styled from 'styled-components'
 import oc from 'open-color'
-import { shadow } from 'lib/styleUtils'
+import { shadow } from '../../lib/styleUtils'
 
 const StyledButton = styled.button`
   font-weight: 600;

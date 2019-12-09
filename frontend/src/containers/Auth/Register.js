@@ -8,7 +8,7 @@ import {
   RightAlignedLink,
   AuthError,
   AuthGeoloc
-} from "components/Auth";
+} from "../../components/Auth";
 
 // 셀렉트 컴포넌트 사용을 위해
 import Select from "react-select";
@@ -16,8 +16,8 @@ import Select from "react-select";
 // redux 사용을 위해
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import * as authActions from "redux/modules/auth";
-import * as userActions from "redux/modules/user";
+import * as authActions from "../../redux/modules/auth";
+import * as userActions from "../../redux/modules/user";
 
 // debounce = 특정 함수가 반복적으로 일어나면, 바로 실행하지 않고 주어진만큼 쉬어준다.
 // 로그인인풋을 맞게 넣었을경우 계속해서 서버로 요청이 들어가는것 해결.
@@ -28,7 +28,7 @@ import debounce from "lodash/debounce";
 import { geolocated } from "react-geolocated";
 
 // local storage를 위해.
-import storage from "lib/storage";
+import storage from "../../lib/storage";
 
 // 문자열 검증을 위해
 import { isEmail, isLength, isAlphanumeric, isNumeric } from "validator";

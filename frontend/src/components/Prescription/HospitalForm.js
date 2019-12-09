@@ -4,8 +4,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import Input from '@material-ui/core/Input'
 import FormControl from '@material-ui/core/FormControl'
 import Grid from '@material-ui/core/Grid'
-import { Buttons } from 'components/Prescription'
-import * as prescriptionAPI from 'lib/api/prescription'
+import { Buttons } from '../../components/Prescription'
+import * as prescriptionAPI from '../../lib/api/prescription'
 
 const useStyles = makeStyles(theme => ({
   container: {
