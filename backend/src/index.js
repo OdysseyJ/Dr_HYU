@@ -1,5 +1,5 @@
 const Koa = require('koa')
-const cors = require('@koa/cors')
+const cors = require('koa2-cors')
 const Router = require('koa-router')
 const dotenv = require('dotenv')
 const { jwtMiddleware } = require('./lib/token')
