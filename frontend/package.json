@@ -145,5 +145,5 @@
   "babel": {
     "presets": ["react-app"]
   },
-  "proxy": "http://localhost:4000"
+  "proxy": "http://54.180.31.234:4000"
 }
