@@ -10,9 +10,7 @@ class Home extends Component {
     const { usertype } = this.props.loggedInfo.toJS()
     return (
       <div>
-        {' '}{this.props.logged && usertype === 'patient'
-          ? <Patient />
-          : <div />}
+        {this.props.logged && usertype === 'patient' ? <Patient /> : <div />}
         {this.props.logged && usertype === 'hospital' ? <Hospital /> : <div />}
         {this.props.logged && usertype === 'store' ? <Store /> : <div />}
       </div>
