@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { Route } from "react-router-dom";
 import { Auth, Home, HospitalSearch, StoreSearch, Prescription } from "pages";
-import HeaderContainer from "../src/containers/Base/HeaderContainer";
+import HeaderContainer from "./containers/Base/HeaderContainer";
 
-import storage from "lib/storage";
+import storage from "./lib/storage";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import * as userActions from "../src/redux/modules/user";
+import * as userActions from "./redux/modules/user";
 
 class App extends Component {
   initializeUserInfo = async () => {
