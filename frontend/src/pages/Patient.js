@@ -5,7 +5,7 @@ import {
   CurrentVisitList,
   FavoriteList,
   PrescriptionList
-} from '../components/Patient'
+} from '../components/Patient/index'
 import Grid from '@material-ui/core/Grid'
 
 class Patient extends Component {
