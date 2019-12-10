@@ -19,6 +19,7 @@
     "crypto": "^1.0.1",
     "csv-parse": "^4.8.2",
     "dotenv": "^8.2.0",
+    "fs": "0.0.1-security",
     "iconv-lite": "^0.5.0",
     "joi": "^14.3.1",
     "jsonwebtoken": "^8.5.1",
