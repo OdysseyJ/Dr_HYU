@@ -75,7 +75,7 @@ ctrl.localRegister = async ctx => {
 ctrl.localLogin = async ctx => {
   // 인풋 유효한지 처리.
   const schema = Joi.object().keys({
-    email: Joi.string().email().required(),
+    email: Joi.string().required(),
     password: Joi.string().required()
   })
 
