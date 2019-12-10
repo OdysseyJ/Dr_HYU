@@ -1,5 +1,0 @@
-export { default as Home } from './Home'
-export { default as Login } from './Login'
-// export { default as Patient } from './Patientpage'
-// export { default as Hospital } from './Hospitalpage'
-// export { default as Store } from './Storepage'
