@@ -13,9 +13,6 @@ ctrl.findUserInfo = async ctx => {
 }
 
 ctrl.getDefaultUserInfo = async ctx => {
-  console.log('TEST')
-  console.log(records[1])
-  console.log(records.length)
   records.map(p => {
     const [name, phonenum, email, password, lat, lng] = [
       p[0],

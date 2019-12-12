@@ -80,7 +80,6 @@ db.User.prototype.generateToken = function () {
     _id: this._id,
     profile: this.profile
   }
-  console.log('prototype', payload)
   return generateToken(payload, 'account')
 }
 
@@ -187,7 +186,6 @@ db.Prescription.getAllPrescription = ({ uemail }) => {
 }
 
 db.Prescription.updateById = ({ prescriptionId, prescription, sname }) => {
-  console.log(prescriptionId, prescription, sname)
   return db.Prescription.update(
     {
       prescription: prescription,

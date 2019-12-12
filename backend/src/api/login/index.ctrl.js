@@ -56,9 +56,6 @@ ctrl.localRegister = async ctx => {
   try {
     token = await account.generateToken()
   } catch (e) {
-    console.log('dhodkseo')
-    console.log(process.env.JWT_SECRET)
-    console.log('토큰발급실패')
     ctx.throw(500, e)
   }
 

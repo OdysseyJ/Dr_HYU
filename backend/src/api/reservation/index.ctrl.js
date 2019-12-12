@@ -3,7 +3,6 @@ const db = require(__dirname + '/../../models')
 
 ctrl.postreservation = async ctx => {
   const { time, uemail, sname, hname } = ctx.request.body
-  console.log(ctx.request.body)
   await db.Reservation.makeReservation({
     time: time,
     uemail: uemail,
@@ -49,7 +48,6 @@ ctrl.getreservations = async ctx => {
   })
 
   ctx.body = reservationsArr
-  console.log(ctx.body)
   ctx.status = 200
 }
 

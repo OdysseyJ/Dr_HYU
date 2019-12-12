@@ -34,7 +34,6 @@ ctrl.getFavorites = async ctx => {
     return p.dataValues
   })
 
-  console.log(reservationsArr)
   ctx.body = reservationsArr
   ctx.status = 200
 }

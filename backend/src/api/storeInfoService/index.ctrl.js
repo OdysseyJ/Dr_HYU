@@ -232,7 +232,6 @@ ctrl.setPrescriptionPossible = async ctx => {
 
 ctrl.getStoreByName = async ctx => {
   const { sname } = ctx.request.query
-  console.log(sname)
   ctx.body = await db.Store.findByStoreName(sname)
   ctx.status = 200
 }
